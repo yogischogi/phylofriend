@@ -1,0 +1,18 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}Installation}{4}{section.2}
+\contentsline {section}{\numberline {3}Command Line Options}{5}{section.3}
+\contentsline {section}{\numberline {4}Examples}{6}{section.4}
+\contentsline {subsection}{\numberline {4.1}Create a Phylogenetic Tree}{6}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Pimp Your Tree with Nicer Labels}{6}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Use a Specific Set of Mutation Rates}{7}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Calibrate Your Data}{7}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Count Mutations}{8}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}Extract Data from a Spreadsheet}{8}{subsection.4.6}
+\contentsline {section}{\numberline {5}Technicalities}{10}{section.5}
+\contentsline {subsection}{\numberline {5.1}Source Code Documentation}{10}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Mutation Model}{10}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}CSV Input Format}{10}{subsection.5.3}
+\contentsline {subsection}{\numberline {5.4}Text Format}{11}{subsection.5.4}
+\contentsline {subsection}{\numberline {5.5}PHYLIP Format}{11}{subsection.5.5}
+\contentsline {section}{References}{12}{section*.2}

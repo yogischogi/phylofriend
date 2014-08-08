@@ -1,0 +1,35 @@
+\section{Installation}
+
+This guide is mainly targeted towards persons who use Linux Mint
+or other Linux versions of the Debian family. Some familiarity
+with the use of Linux commands is assumed.
+
+Currently there are no binary distributions available for
+Windows or the Mac. Users of these operating systems can
+use Phylofriend as well, but they will experience some
+laborious installation work. The best way is to follow the
+instructions provided on the
+\href{http://golang.org/}{Go} home page and the
+\href{http://evolution.genetics.washington.edu/phylip.html}{PHYLIP}
+home page.
+
+The following list applies to Linux users only:
+
+\begin{enumerate}
+\item Make sure that the Go programming language is installed.
+	If not it can be installed by typing\\
+	\texttt{sudo apt-get install golang}
+\item Read the Go
+	\href{http://golang.org/doc/install}{Getting Started}
+	guide. Make sure to set your \emph{GOPATH} variable and
+	include it in your \emph{PATH} so that Go programs can be
+	found.
+\item For the creation of phylogenetic trees install the
+	PHYLIP program package by typing\\
+	\texttt{sudo apt-get install phylip}
+\item Fetch the Phylofriend program with\\
+	\texttt{go get code.google.com/p/phylofriend}
+\item Install the program with\\
+	 \texttt{go install code.google.com/p/phylofriend}
+\end{enumerate}
+

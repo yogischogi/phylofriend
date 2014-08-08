@@ -1,0 +1,102 @@
+\section{Technicalities}
+
+\subsection{Source Code Documentation}
+
+To access the source code documentation point your
+web browser to:
+
+\begin{itemize}
+\item \href{http://godoc.org/code.google.com/p/phylofriend}{http://godoc.org/code.google.com/p/phylofriend}
+\end{itemize}
+
+If you want to modify the source code it is best to
+use \emph{godoc} locally on your computer.
+
+\begin{enumerate}
+\item If \emph{godoc} is not yet installed install it by typing\\
+	\texttt{sudo apt-get install golang-go.tools}\\
+	(Linux Mint)
+\item Start the documentation web server with\\
+	\texttt{godoc -http=:6060}
+\item Point your web browser to \texttt{localhost:6060}.
+\item Click on \emph{Packages} and search for \emph{phylofriend}.
+\end{enumerate}
+
+This will give you a nice overview of the internal program
+documentation. You can also click on function names to browse
+the source code.
+
+
+\subsection{Mutation Model}
+
+The two basic mutation models are the infinite alleles model
+and the stepwise mutation model as explained by Bruce Walsh\cite{Wal02}.
+Phylofriend uses a hybrid mutation model. Most markers are
+calculated using the stepwise model, palindromic markers are
+calculated as described in \cite{Can14}.
+
+As the method for calculating the genetic distance is likely
+to change with time please look at the internal program
+documentation if you need more details.
+
+
+\subsection{CSV Input Format}
+
+Example:
+
+\begin{verbatim}
+id1,"Dirk Struve",Germany,R1b-CTS4528,13,24,14,11,11-14,12,...
+id2,"Pyl. O. Friend",Germany,R1b-CTS4528,13,24,14,11,11-14,...
+\end{verbatim}
+
+When importing a file in comma separated values format the
+first column must contain IDs. An arbitrary number of columns
+containing custom information may follow. The last columns
+must contain at least 12 Y-STR values in Family Tree DNA order.
+Rows containing comments are allowed.
+
+Phylofriend will always try to parse the file as best as
+it can.
+
+
+\subsection{Text Format}
+
+Example:
+
+\begin{verbatim}
+Dirk_Struv	13	24	14	11	11	14	12	12	12	12	14	28
+Pyl._O._Fr	13	24	14	11	11	14	12	12	12	12	14	28
+\end{verbatim}
+
+The text format is a simplified format intended for easy
+parsing and to work well with other programs. For compatibility
+reasons the first column is exactly 10 characters long and
+contains only non Unicode characters. Spaces are transformed into
+underscores. The following columns contain Y-STR values
+separated by tabs.
+
+
+\subsection{PHYLIP Format}
+
+Example:
+
+\begin{verbatim}
+2
+Dirk_Struv	0	0
+Pyl._O._Fr	0	0
+\end{verbatim}
+
+The first line contains the number of entries. An entry
+line contains an ID that is 10 characters long and contains
+only non Unicode characters. Spaces are transformed into
+underscores. The columns containing genetic distances
+are separated by tabs. For readability reasons
+Phylofriend writes only integers. If you need more precision
+you can scale the distance by using the \emph{cal} option.
+
+
+
+
+
+
+

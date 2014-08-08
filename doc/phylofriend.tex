@@ -1,0 +1,35 @@
+% Phylofriend User Guide
+%
+% For PDF output: pdflatex phylofriend.tex
+% For HTML output: plastex pyhlofriend.tex
+%
+% For Graphics:
+% Use PNG format to avoid problems with HTML conversion.
+% Recommended size: < 13cm x 18cm (width x height).
+% Recommended resolution: 300 dpi.
+%
+% Use fixed width instead of textwidth, so that plastex can
+% recognize the graphics size. For example use
+% \includegraphics[width=13cm]{img/haplogroups.png}
+% instead of
+% \includegraphics[width=\textwidth]{img/haplogroups.png}
+
+
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=blue]{hyperref}
+\usepackage{graphicx}
+
+\begin{document}
+\include{title}
+\tableofcontents
+\include{introduction}
+\include{installation}
+\include{options}
+\include{examples}
+\include{technicalities}
+\input{literature}
+\bibliography{literature}
+\addcontentsline{toc}{section}{References}
+\end{document}

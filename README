@@ -1,0 +1,6 @@
+This is the Phylofriend program distribution.
+
+Phylofriend's main purpose it to create genetic distance
+matrices from Y-STR values. The results can be used to
+create phylogenetic trees using the PHYLIP program.
+

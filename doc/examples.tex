@@ -1,0 +1,191 @@
+\section{Examples}
+
+\subsection{Create a Phylogenetic Tree}
+
+\begin{enumerate}
+\item Copy persons' data from a Family Tree DNA project website into
+	a spreadsheet. If the Y-STR values do not appear properly try
+	inserting them into the spreadsheet as unformatted text.
+\item Save the spreadsheet in CSV (comma separated values)
+	format, for example \emph{persons.csv}.
+\item Start a terminal or command line interpreter and go
+	to the directory where you stored \emph{persons.csv}.
+\item Create a matrix of genetic distances by typing\\
+	\texttt{phylofriend -personsin persons.csv -phylipout infile}
+\item Use the PHYLIP program to create a tree in Newick format
+	with\\
+	\texttt{/usr/lib/phylip/bin/kitsch}\\
+	You will need to answer some questions. Usually the
+	default values are good enough. The results will be
+	two text files, one named \emph{outtree} which contains
+	the tree in Newick format and another one named
+	\emph{outfile} which contains a more human readable
+	description.
+\item Create an image of the tree by typing\\
+	\texttt{/usr/lib/phylip/bin/drawgram}\\
+	Use \emph{outtree} as the input file name.
+	The resulting tree will be stored in a file named 
+	\emph{plotfile}.
+
+	A nice alternative to visualize the tree is the use of the
+	\href{http://www.trex.uqam.ca/index.php?action=newick&project=trex}
+	{Trex}\cite{Trex}
+	webserver. You can copy the contents of the file \emph{outtree}
+	into the Trex window.
+\end{enumerate}
+
+If you do not specify a file containing mutation rates
+Phylofriend will use average 37 marker values as default.
+They can be found in \cite{Kly12}.
+
+
+\subsection{Pimp Your Tree with Nicer Labels}
+
+By default Phylofriend assumes that your persons input file's
+first column contains a list of IDs. This is usually a Family
+Tree DNA Kit number. The resulting tree is hard to read. Many
+projects keep names in another column. You can access this 
+column with the \emph{namescol} option. Suppose your second
+column contains names. You can create a distance matrix with
+names instead of IDs by typing
+
+\noindent\texttt{phylofriend -personsin persons.csv -namescol 2\\
+-phylipout infile}
+
+Due to compatibility issues with other programs the names
+should be 10 characters long and may not contain Unicode
+characters. Phylofriend will apply a name transformation
+but the result is sometimes a bit strange.
+
+You can also use the \emph{namescol} option to create trees
+that contain the origins of people or the haplogroups. Although
+I strongly recommend to build trees only from people who
+belong to the same haplogroup this is sometimes useful if
+you want to know if different haplogroups are close on their
+Y-STR values.
+
+If you want to publish your tree you will often need to
+protect the privacy of the members. This is what the
+\emph{anonymize} option is for. By typing
+
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile -anonymize}
+
+you will get a distance matrix where the names are replaced
+by numbers.
+
+
+\subsection{Use a Specific Set of Mutation Rates}
+
+The first example uses Phylofriend's build in mutation rates
+which are average values for the standard 37 marker test.
+Phylofriend supports the use of arbitrary mutation rates by
+the \emph{mrfile} option. The \emph{phylofriend/mutationrates}
+directory contains some files with mutation rates. The average
+mutation rates where taken from \cite{Kly12}.
+If you like to compare on 67 markers you can use
+
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
+-mrin code.google.com/p/phylofriend/mutationrates/67-average.txt}
+
+
+\subsection{Calibrate Your Data}
+
+Mutation rates depend on the method applied to calculate
+genetic distances and the sample populations used. Mutations
+themselves occur by coincidence. Average mutation rates
+often yield acceptable results but in most cases you will
+have to calibrate your data especially if you want to
+calculate in years.
+
+Phylofriend provides two options for data calibration:
+\emph{gendist}, the generation distance in years and
+\emph{cal} an additional calibration factor. Internally
+they are just multiplied together but using two separate
+factors seems more convenient for typical use cases.
+
+The default value for the generation distance is 25 years.
+For time spans over the last few hundred years a generation
+distance of 30 years often yields better results. This can
+be done by
+
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
+-gendist 30}
+
+It is often difficult to calibrate data because you need a
+reliable paper trail or a well defined historic event. If
+you are lacking both you can try to apply Klyosov's statistical
+method\cite{Kly09}. For large enough sample sizes this will
+effectively reduce the statistical error but you will still
+be left with an unknown systematical one.
+
+
+\subsection{Count Mutations}
+
+The \emph{phylofriend/mutationrates} directory contains
+sets of mutation rates where all markers are set to 1.
+This makes mutation counting easy but you will need an
+additional little trick. Internally Phylofriend uses
+average values. So it is possible to compare persons who
+have tested on different sets of markers.
+
+If you want to count mutations for example on a 37 marker
+scale, you must multiply Phylofriend's internal results with
+37. The easiest way to archive this is by misusing the
+\emph{gendist} option. 
+
+\noindent\texttt{phylofriend -personsin persons.csv\\
+-mrin code.google.com/p/phylofriend/mutationrates/37-1.txt\\
+-phylipout distancecount.txt -gendist 37}
+
+
+\subsection{Extract Data from a Spreadsheet}
+
+Spreadsheet data is often uncomfortable to handle, especially
+if you want to write your own program and need to parse it.
+For this purpose Phylofriend supplies the \emph{txtout}
+option. It writes data to a text file in simplified form.
+
+The easiest way to use it is
+
+\noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt}
+
+This extracts the data from \emph{persons.csv} and writes
+it to \emph{persons.txt}. The first column of \emph{persons.txt}
+contains the first column found in \emph{persons.csv}, usually
+a set of IDs. The following columns contain the Y-STR values.
+All columns are separated by tabs.
+
+If you want to use another column as the first column you can
+use the \emph{namescol} option:
+
+\noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt\\
+-namescol 2}
+
+This extracts the second column from \emph{persons.csv} and
+writes it to the first column of \emph{persons.txt}.
+
+When using the \emph{txtout} option you will need to specify
+how many Y-STR values are written to the text file. This is
+done by \emph{nvalues}. Phylofriend will write the same number
+of Y-STR values to each line. Missing values are written as
+0, larger sets of Y-STR values are truncated. This is how to
+write a full set of 111 markers:
+
+\noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt\\
+-nvalues 111}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
