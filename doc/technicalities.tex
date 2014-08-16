@@ -40,6 +40,85 @@ to change with time please look at the internal program
 documentation if you need more details.
 
 
+\subsection{Mutation Rates}
+
+The directory \emph{phylofriend/mutationrates} contains
+files with predefined mutation rates.
+
+\subsection*{All 1 Mutation Rates}
+
+\begin{itemize}
+\item 12-1.txt
+\item 37-1.txt
+\item 67-1.txt
+\item 111-1.txt
+\end{itemize}
+
+In these files all mutation rates are set to 1 for the
+corresponding set of markers. They are useful for simple
+mutation counting.
+
+
+\subsection*{Average Mutation Rates}
+
+\begin{itemize}
+\item 12-average.txt
+\item 37-average.txt
+\item 67-average.txt
+\item 111-average.txt
+\end{itemize}
+
+In these files average mutation rates are used for the
+corresponding set of markers. The mutation rates were taken
+from \cite{Kly12}. The distance matrix contains years but
+these years should not be interpreted as TMRCA (Time to Most
+Recent Common Ancestor). It is more like a \emph{How long
+do I have to wait on average before such a genetic distance
+occurs?}
+
+These mutation rates are useful for genealogical purposes.
+During genealogical time frames (about 500 years) long time
+stable markers rarely change. If such an event happens a
+son may be immediately 1000 years away from his father in
+terms of genetic distance. This is a correct result because
+mutations are governed by coincidence and such events do
+happen from time to time but it does not make much sense
+to place a son far away from his family. So very stable
+markers are purposely underweighted by using average
+values.
+
+
+\subsection*{12 Marker Single Mutation Rates}
+
+\begin{itemize}
+\item 12.txt
+\item 37-12.txt
+\item 67-12.txt
+\item 111-12.txt
+\end{itemize}
+
+These files are basically the same as the average mutation
+rates files but for the first 12 markers the mutation rates
+are set per marker. This puts on the appropriate weight on
+very stable markers. The mutation rates were taken from
+Wikipedia\cite{Wiki-List_of_DYS_markers}. Although there
+may be some doubt if data from Wikipedia can be trusted 
+the first 12 markers are well known and they are in use
+for a long time. So I just adopted them. The values should be
+good enough for most purposes.
+
+For each file the 12 marker mutation rates were multiplied
+by a calibration factor so that their average value matches
+that from the rest of the file.
+
+These files are useful for deeper history or if you
+observe changes on long time stable markers. If several
+persons share the same value on a very stable marker they
+probably belong together. So try these mutation rates to
+see if the results make more sense than those obtained by
+using average markers.
+
+
 \subsection{CSV Input Format}
 
 Example:

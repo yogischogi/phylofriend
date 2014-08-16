@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.30)  8 AUG 2014 14:34
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.6.30)  16 AUG 2014 18:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -556,10 +556,10 @@ di-rec-tory con-tains sets of mu-ta-tion rates where
  (./technicalities.tex [10
 
 
-]) [11] (./literature.tex)
+] [11] [12]) [13] (./literature.tex)
 No file phylofriend.bbl.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 35.
-[12
+[14
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 35.
@@ -568,27 +568,27 @@ options.aux) (./examples.aux) (./technicalities.aux))
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 35.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 35.
 Package rerunfilecheck Info: File `phylofriend.out' has not changed.
-(rerunfilecheck)             Checksum: 8D7936490ACC8AAE9B445A7D328E9120;1072.
+(rerunfilecheck)             Checksum: 9E4D60EEC0FA743179544BA0CB414FC2;1136.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 35.
  ) 
 Here is how much of TeX's memory you used:
- 5817 strings out of 494469
- 84129 string characters out of 6171579
- 169132 words of memory out of 5000000
- 8908 multiletter control sequences out of 15000+600000
+ 5826 strings out of 494469
+ 84258 string characters out of 6171579
+ 169178 words of memory out of 5000000
+ 8910 multiletter control sequences out of 15000+600000
  9324 words of font info for 33 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 29i,6n,30p,228b,332s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,6n,30p,228b,396s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on phylofriend.pdf (12 pages, 105348 bytes).
+Output written on phylofriend.pdf (14 pages, 108949 bytes).
 PDF statistics:
- 235 PDF objects out of 1000 (max. 8388607)
- 212 compressed objects within 3 object streams
- 53 named destinations out of 1000 (max. 500000)
- 137 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 257 PDF objects out of 1000 (max. 8388607)
+ 232 compressed objects within 3 object streams
+ 60 named destinations out of 1000 (max. 500000)
+ 145 words of extra memory for PDF output out of 10000 (max. 10000000)
 
