@@ -628,6 +628,49 @@ func distancePalindromic(ystr1, ystr2 YstrMarkers, a, b int) float64 {
 	return distance
 }
 
+// ModalHaplotype calculates the modal haplotype for a group of persons.
+// The modal value for a marker is the value with the highest occurence.
+// If two values have the same frequency the lower one is chosen.
+func ModalHaplotype(persons []*Person) *Person {
+	modal := Person{
+		ID:       "modal",
+		Name:     "modal",
+		Name10:   "_____modal",
+		Ancestor: "modal",
+		Origin:   "modal",
+	}
+	// Calculate modal value for each marker.
+	for marker := 0; marker < Nmarkers; marker++ {
+		// cMarkers maps marker values to the count of that value.
+		cMarkers := make(map[float64]int)
+		// Count marker values.
+		for _, person := range persons {
+			markerValue := person.YstrMarkers.Value(marker)
+			if markerValue > 0 {
+				cMarkers[markerValue] += 1
+			}
+		}
+		// Find modal value.
+		max := 0
+		modalValue := 0.0
+		// Determine the marker with the highest occurence.
+		for value, count := range cMarkers {
+			if count > max {
+				modalValue = value
+				max = count
+			}
+		}
+		// If two markers have the same frequency choose the lower one.
+		for value, count := range cMarkers {
+			if count == max && value < modalValue {
+				modalValue = value
+			}
+		}
+		modal.YstrMarkers.SetValue(marker, modalValue)
+	}
+	return &modal
+}
+
 // DistanceMatrix is a matrix of genetic distances for a list of persons.
 // Distance matrices are used as input for phylogenetic tree software
 // like PHYLIP (https://en.wikipedia.org/wiki/PHYLIP).

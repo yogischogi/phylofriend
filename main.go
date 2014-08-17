@@ -21,9 +21,10 @@ func main() {
 		txtout    = flag.String("txtout", "", "Output filename for persons in text format.")
 		nvalues   = flag.Int("nvalues", 67, "Number of Y-STR values to write into text file.")
 		mrout     = flag.String("mrout", "", "Filename for the export of mutation rates.")
-		anonymize = flag.Bool("anonymize", false, "Determines if persons should be anonymized.")
+		anonymize = flag.Bool("anonymize", false, "Anonymizes persons' private data.")
 		cal       = flag.Float64("cal", 1, "Calibration factor for PHYLIP output.")
 		gendist   = flag.Float64("gendist", 25, "Generation distance in years.")
+		modal     = flag.Bool("modal", false, "Creates modal haplotype.")
 	)
 	flag.Parse()
 
@@ -74,6 +75,12 @@ func main() {
 	// Anonymize persons data.
 	if *anonymize == true {
 		persons = genetic.Anonymize(persons)
+	}
+
+	// Create modal haplotype.
+	if *modal == true {
+		modal := genetic.ModalHaplotype(persons)
+		persons = append(persons, modal)
 	}
 
 	// Write persons data in text format.
