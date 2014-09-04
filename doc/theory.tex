@@ -43,7 +43,8 @@ of years).
 Most people want to know more about family relationships.
 Luckily there is another type of mutations that occurs much
 more often than SNPs. This is the repetition of certain
-genetic patterns. They group people into haplotypes.
+genetic patterns. They are called STRs (Short Tandem Repeats)
+and group people into haplotypes.
 
 \begin{figure}[ht]
 \centering
@@ -130,6 +131,148 @@ In most cases the standard tests are good enough. We do not
 need a paternity test for genealogical purposes but it is
 important to remember that the standard tests only places
 persons into time frames of hundreds of years.
+
+
+\subsection{Genetic Distances}
+
+There are many ways to calculate genetic distances. Here we
+use the method of mutation counting as described by Anatole
+Klyosov in \cite{Kly09}.
+We just count the number of mutation one persons differs from
+another and take the result as the genetic distance.
+Take a look at these two 6-marker haplotypes:
+
+\vspace{1em}
+\begin{tabular}{lrrrrrr}
+       & DYS393 & DYS390      & DYS19 & DYS391      & DYS385a & DYS385b \\
+Carl   &     13 & 24          & 14    & 11          & 11      & 14 \\
+Clas   &     13 & \textbf{23} & 14    & \textbf{12} & 11      & 14
+\end{tabular}
+\vspace{1em}
+
+At DYS390 and DYS391 Clas differs from Carl by one mutation.
+Thus their genetic distance on the 6-marker scale is 2.
+
+To represent this genetic distance in years we need to know
+how often mutations occur. Thus we need a mutation rate.
+The mutation rate is defined as follows:
+
+\begin{equation}
+k = \frac{m}{g Y} \label{mutationrate}
+\end{equation}
+
+\begin{tabular}{lll}
+k: &  Mutation rate per marker and generation\\
+m: &  Number of mutations \\
+g: &  Number of generations \\
+Y: &  Number of Y-STR values (markers)
+\end{tabular}
+\vspace{1em}
+
+Mutation rates are derived from sample populations. Different
+family lineages often expose different mutation rates. So the
+standard mutation rates should be considered as a first 
+estimate. You can uses Phylofriend's \emph{cal} option to
+adjust your data to historic events.
+
+Now we can use formula \ref{mutationrate} to calculate a
+genetic distance in generations. Formula \ref{mutationrate}
+is equivalent to:
+
+\begin{equation}
+g = \frac{m}{k Y} \label{generationdistance}
+\end{equation}
+
+This gives us the number of generations between Carl and Clas.
+The only thing we still need to know is the generation time.
+For historical purposes a generation time of 25 years is
+commonly used. We get the time by multiplying the number
+of generations with the generation time.
+
+\begin{equation}
+t = g d 
+\end{equation}
+
+\begin{tabular}{lll}
+t: &  Genetic distance in years\\
+g: &  Number of generations \\
+d: &  Generation time in years
+\end{tabular}
+\vspace{1em}
+
+By substituting $g$ with formula \ref{generationdistance}
+we get the genetic distance in years:
+
+\begin{equation}
+t = \frac{m d}{k Y}
+\end{equation}
+
+\begin{tabular}{lll}
+t: &  Genetic distance in years\\
+m: &  Number of mutations \\
+d: &  Generation time in years\\
+k: &  Mutation rate per marker and generation\\
+Y: &  Number of Y-STR values (markers)
+\end{tabular}
+\vspace{1em}
+
+Let us try this out. The number of mutations between Clas
+and Carl is 2. The mutation rate for a 6-marker haplotype
+is 0.002 \cite{Kly09}. So
+
+\begin{equation}
+t = \frac{2 \cdot 25}{0.002 \cdot 6} = 4167 years
+\end{equation}
+
+Wow, that is a very long time. But what does this number
+actually mean? First, it is an average value and there is
+a very big margin of error to it but it is useful as a first
+estimate and to group people together according to their
+genetic distance. Second it is the time Clas and Carl would
+be separated if Clas would be an ancestor of Carl (or the
+other way round). It is not the time to their most recent
+common ancestor (TMRCA).
+
+If Clas and Carl would be living today, how long would be the
+the time to their most recent common ancestor? The first guess
+is that the common ancestor would be in-between his descendants
+in terms of genetic distance. So Claus and Carl would be
+$4167years / 2 = 2085years$ away from him. 
+
+This is a good first guess but unfortunately reality is much
+more complicated. Mutations occur by coincidence and due to
+the laws of statistics some people develop only a few mutations
+while others develop much of them. So our first guess may give
+a totally wrong impression. Generally it is not a good idea to
+calculate the time to a common ancestor just based on the results
+of two people. The best way is to identify a group of people who
+share a common lineage and calculate the time to the most recent
+common ancestor for the whole group. Anatole Klyosov describes
+how this is done in \cite{Kly09}.
+
+For those who still want to use a TMRCA value based on the results
+of just two people Bruce Walsh has developed a method to give
+a time estimate\cite{Wal01}. This is better than the naive
+calculation we have used before but it is still an estimate and
+it is only valid for demographically stable populations.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
