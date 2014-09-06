@@ -133,7 +133,7 @@ important to remember that the standard tests only places
 persons into time frames of hundreds of years.
 
 
-\subsection{Genetic Distances}
+\subsection{Genetic Distance}
 
 There are many ways to calculate genetic distances. Here we
 use the method of mutation counting as described by Anatole
@@ -161,7 +161,7 @@ The mutation rate is defined as follows:
 k = \frac{m}{g Y} \label{mutationrate}
 \end{equation}
 
-\begin{tabular}{lll}
+\begin{tabular}{ll}
 k: &  Mutation rate per marker and generation\\
 m: &  Number of mutations \\
 g: &  Number of generations \\
@@ -193,7 +193,7 @@ of generations with the generation time.
 t = g d 
 \end{equation}
 
-\begin{tabular}{lll}
+\begin{tabular}{ll}
 t: &  Genetic distance in years\\
 g: &  Number of generations \\
 d: &  Generation time in years
@@ -207,7 +207,7 @@ we get the genetic distance in years:
 t = \frac{m d}{k Y}
 \end{equation}
 
-\begin{tabular}{lll}
+\begin{tabular}{ll}
 t: &  Genetic distance in years\\
 m: &  Number of mutations \\
 d: &  Generation time in years\\
@@ -256,7 +256,94 @@ a time estimate\cite{Wal01}. This is better than the naive
 calculation we have used before but it is still an estimate and
 it is only valid for demographically stable populations.
 
+The whole story is of course more complicated than the simple
+calculation presented here. Different mutation models exist
+and some genetic markers should be treated in a special way.
+Phylofriend uses a hybrid mutation model that is a mixture
+of the stepwise mutation model and the infinite alleles model.
+Both models are explained by Bruce Walsh in \cite{Wal02}.
 
+
+\subsection{From Distances to Trees}
+
+Phylofriend computes genetic distances between different
+persons. These distances can be used to derive phylogenetic
+trees using standard algorithms that are implemented by
+the PHYLIP\cite{Phylip} program.
+
+Genetic distances are often represented by two-dimensional
+drawings that are easy to understand. Here we label the
+distance components as \emph{Component 1} and 
+\emph{Component 2}. Usually the values for each component
+are derived from many markers by using principal component
+analysis\cite{Shl09}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=13cm]{img/distancetrees.png}
+\caption{\label{distancetrees} Genetic distances can be
+represented by phylogenetic trees. Different algorithms
+often yield different results.}
+\end{figure}
+
+Figure \ref{distancetrees} shows the genetic positions of
+several persons and the corresponding phylogenetic trees.
+In the first example Carl and Clas are close together. So
+they are also grouped together in the tree. Peter is at a
+longer distance but the distance to Carl and Clas is the
+same. Thus he is put into a separate branch. The genetic
+distance between the persons is represented by the length
+of the horizontal lines in the tree.
+
+The second example is slightly more complicated. Carl and
+Clas are still close together but Peter is at a different
+distance to each of them. The trees were constructed by
+using two different methods, Fitch-Margoliash (kitch program)
+and Neighbor. Fitch-Margoliash groups Carl and Clas together
+and puts Peter at a medium distance from both of them. This
+is a sensible approach because some people develop many
+mutation and others develop less. So the ancestor of Carl and
+Clas was probably somewere in-between. However the resulting
+tree does not represent the genetic distances correctly but
+it displays a very nice representation of temporal evolution.
+
+The neighbor method tries to represent the genetic distances
+as good as possible. In this case it is accurate but it gives
+you a bad idea of temporal evolution.
+
+For a high quality data set both methods should yield similar
+results in grouping people together. The real problem is that
+mutations occur by coincidence and we often have a very sparse
+collection of descendants who are at large genetic distances
+to each other.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=13cm]{img/distances.png}
+\caption{\label{distances} Haplotypes and genetic distances
+of two families. Although both lineages have a different modal
+(ancestral) haplotype the haplotypes of individuals from
+both families are sometimes close together. In such cases
+phylogenetic tree algorithms yield wrong results.}
+\end{figure}
+
+Figure \ref{distances} shows a more realistic situation.
+It represents the genetic positions of members from two
+different families. All members of one family descent from
+one common ancestor. Due to the laws of statistics most
+family members are close to his haplotype. So it can be
+calculated. It is called the ancestral or modal haplotype.
+
+Other family member are at a greater distance from the
+ancestor. Sometimes members from different families come
+close to each other. In such cases all algorithms will 
+give you wrong results.
+
+This is the reason why it is so important to test for
+haplogroups before creating a phylogenetic tree. Haplogroups
+are caused by very stable mutations. Haplotypes often overlap.
+So it should be ensured that all persons in a tree belong
+to the same haplogroup.
 
 
 

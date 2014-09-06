@@ -20,5 +20,6 @@
 \contentsline {subsection}{\numberline {6.1}Haplogroups}{14}{subsection.6.1}
 \contentsline {subsection}{\numberline {6.2}Haplotypes}{15}{subsection.6.2}
 \contentsline {subsection}{\numberline {6.3}Phylogenetic Trees}{15}{subsection.6.3}
-\contentsline {subsection}{\numberline {6.4}Genetic Distances}{17}{subsection.6.4}
-\contentsline {section}{References}{19}{section*.5}
+\contentsline {subsection}{\numberline {6.4}Genetic Distance}{17}{subsection.6.4}
+\contentsline {subsection}{\numberline {6.5}From Distances to Trees}{19}{subsection.6.5}
+\contentsline {section}{References}{22}{section*.5}
