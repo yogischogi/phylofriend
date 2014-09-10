@@ -158,14 +158,14 @@ how often mutations occur. Thus we need a mutation rate.
 The mutation rate is defined as follows:
 
 \begin{equation}
-k = \frac{m}{g Y} \label{mutationrate}
+k = \frac{m}{g y} \label{mutationrate}
 \end{equation}
 
 \begin{tabular}{ll}
 k: &  Mutation rate per marker and generation\\
 m: &  Number of mutations \\
 g: &  Number of generations \\
-Y: &  Number of Y-STR values (markers)
+y: &  Number of Y-STR values (markers)
 \end{tabular}
 \vspace{1em}
 
@@ -175,12 +175,12 @@ standard mutation rates should be considered as a first
 estimate. You can uses Phylofriend's \emph{cal} option to
 adjust your data to historic events.
 
-Now we can use formula \ref{mutationrate} to calculate a
+Now we can use equation \ref{mutationrate} to calculate a
 genetic distance in generations. Formula \ref{mutationrate}
 is equivalent to:
 
 \begin{equation}
-g = \frac{m}{k Y} \label{generationdistance}
+g = \frac{m}{k y} \label{generationdistance}
 \end{equation}
 
 This gives us the number of generations between Carl and Clas.
@@ -190,7 +190,7 @@ commonly used. We get the time by multiplying the number
 of generations with the generation time.
 
 \begin{equation}
-t = g d 
+t = g d           \label{generationtime}
 \end{equation}
 
 \begin{tabular}{ll}
@@ -204,7 +204,7 @@ By substituting $g$ with formula \ref{generationdistance}
 we get the genetic distance in years:
 
 \begin{equation}
-t = \frac{m d}{k Y}
+t = \frac{m d}{k y} \label{timedistance}
 \end{equation}
 
 \begin{tabular}{ll}
@@ -212,7 +212,7 @@ t: &  Genetic distance in years\\
 m: &  Number of mutations \\
 d: &  Generation time in years\\
 k: &  Mutation rate per marker and generation\\
-Y: &  Number of Y-STR values (markers)
+y: &  Number of Y-STR values (markers)
 \end{tabular}
 \vspace{1em}
 
@@ -221,7 +221,7 @@ and Carl is 2. The mutation rate for a 6-marker haplotype
 is 0.002 \cite{Kly09}. So
 
 \begin{equation}
-t = \frac{2 \cdot 25}{0.002 \cdot 6} = 4167 years
+t = \frac{2 \cdot 25}{0.002 \cdot 6} = 4167\ years
 \end{equation}
 
 Wow, that is a very long time. But what does this number
@@ -262,6 +262,140 @@ and some genetic markers should be treated in a special way.
 Phylofriend uses a hybrid mutation model that is a mixture
 of the stepwise mutation model and the infinite alleles model.
 Both models are explained by Bruce Walsh in \cite{Wal02}.
+
+
+\subsection{Modal Haplotype}
+
+If we have a group of people we are interested in the
+haplotype of their most recent common ancestor. This is
+called the modal haplotype, base haplotype or ancestral
+haplotype. The following table shows the haplotypes of three
+persons on the 6-marker scale and their modal haplotype.
+
+\vspace{1em}
+\begin{tabular}{lrrrrrr} \label{tblmodalhaplotype}
+       & DYS393 & DYS390      & DYS19       & DYS391      & DYS385a     & DYS385b \\
+modal  &     13 & 24          & 14          & 11          & 11          & 14 \\
+Peter  &     13 & 24          & \textbf{15} & 11          & 11          & 14 \\
+Carl   &     13 & 24          & 14          & 11          & \textbf{12} & 14 \\
+Clas   &     13 & \textbf{23} & 14          & \textbf{12} & 11          & 14
+\end{tabular}
+\vspace{1em}
+
+The modal haplotype can easily be calculated. If we use
+equation \ref{timedistance} to calculate the genetic distance
+in years for just a single marker we see that it takes 12500
+years on average for a single marker to mutate only once. 
+Thus for most practical purposes a single marker rarely mutates
+at all. So for a single marker we just look which value occurs
+most often and take this as the modal value.
+
+Phylofriend uses this simplified approach. For many thousands
+of years it is no longer valid. Calculating the median values
+would be a better choice then. The problem with the median
+approach is that some markers show rather big leaps when mutating.
+This could lead to wrong results. I recommend that you always
+take a good look at your data to see which method would be
+appropriate.
+
+
+\subsection{Age Calculation}
+
+\subsubsection{Mutation Counting}
+
+The simplest method to calculate the time to the most recent
+common ancestor (TMRCA) for a group of people is mutation
+counting as described in great detail by Anatole Klyosov in
+\cite{Kly09}. Here a give a short overview only.
+
+First we calculate the modal (ancestral) haplotype. Then we
+count the mutations of every single group member relative to
+the modal haplotype and take the average. This should be a
+good estimate for the group's genetic distance to their ancestor. 
+
+Again we use the definition of the mutationrate \ref{mutationrate}
+but this time we use the average value:
+
+\begin{equation}
+k = \frac{\bar{m}}{g y} \label{averagemutationrate}
+\end{equation}
+
+\begin{tabular}{ll}
+k: &  Mutation rate per marker and generation\\
+$\bar{m}$: &  Average number of mutations relative to modal haplotype\\
+g: &  Number of generations \\
+y: &  Number of Y-STR values per haplotype
+\end{tabular}
+\vspace{1em}
+
+By using the definition of the average, equation
+\ref{averagemutationrate} is equivalent to
+
+\begin{equation}
+k = \frac{\sum_{i=1}^{N} m_i}{N g y}
+\end{equation}
+
+or
+
+\begin{equation}
+g = \frac{\sum_{i=1}^{N} m_i}{N k y}\label{tmrcagenerations}
+\end{equation}
+
+\begin{tabular}{ll}
+g: &  Number of generations \\
+$m_i$: &  Number of mutations of haplotype i relative to modal haplotype\\
+N: &  Number of haplotypes (persons) \\
+k: &  Mutation rate per marker and generation\\
+y: &  Number of Y-STR values per haplotype
+\end{tabular}
+\vspace{1em}
+
+Equation \ref{tmrcagenerations} is the time to the most recent
+common ancestor in generations. If we know the generation time
+$d$ we can write this (see equation \ref{generationtime}) as
+
+\begin{equation}
+t = d \frac{\sum_{i=1}^{N} m_i}{N k y}
+\end{equation}
+
+\begin{tabular}{ll}
+t: & Time to most recent common ancestor (TMRCA)\\
+d: & Generation time\\
+$m_i$: &  Number of mutations of haplotype i relative to modal haplotype\\
+N: &  Number of haplotypes (persons) \\
+k: &  Mutation rate per marker and generation\\
+y: &  Number of Y-STR values per haplotype
+\end{tabular}
+\vspace{1em}
+
+Again we try out the formula by a simple example. The table
+on page \pageref{tblmodalhaplotype} contains three haplotypes
+on the 6-marker scale ($N=3$, $y=6$). Peter and Carl differ
+by one mutation to the modal haplotype and Clas by two. We
+use a generation distance of 25 years ($d=25$) and the average
+mutation rate on the 6-marker scale is 0.002\cite{Kly09}. So
+we get
+
+\begin{equation}
+t = 25 \cdot \frac{1 + 1 + 2}{3 \cdot 0.002 \cdot 6} = 2778\ years
+\end{equation}
+
+Of course the simple method of mutation counting comes not without
+problems. The biggest one is the correct distribution of the
+population sample. For example if you want to calculate the
+TMRCA for a family which is just a few hundred years old
+and add a person by accident who is at a distance of several
+thousand years your TMRCA value will be much too large.
+
+On the other hand if you want to calculate the age of a whole
+haplogroup and add a large number of members from one family
+who are all very close together your TMRCA value will be much
+too small. So this method must be handled with care.
+
+A more general problem is that mutation rates are derived
+from population samples and there is no guarantee that they
+fit to your data set. So whenever possible try to find some
+historical event to calibrate your data.
 
 
 \subsection{From Distances to Trees}
