@@ -169,11 +169,13 @@ y: &  Number of Y-STR values (markers)
 \end{tabular}
 \vspace{1em}
 
-Mutation rates are derived from sample populations. Different
-family lineages often expose different mutation rates. So the
-standard mutation rates should be considered as a first 
-estimate. You can uses Phylofriend's \emph{cal} option to
-adjust your data to historic events.
+Mutation rates are derived from sample populations. But
+mutations occur by coincidence. Thus for a precise measurement
+we need large numbers of mutations. Different family lineages
+often expose different mutation rates. So the standard mutation
+rates should be considered as a first estimate. You can use
+Phylofriend's \emph{cal} option to adjust your data to
+historic events.
 
 Now we can use equation \ref{mutationrate} to calculate a
 genetic distance in generations. Formula \ref{mutationrate}
@@ -328,6 +330,8 @@ y: &  Number of Y-STR values per haplotype
 \end{tabular}
 \vspace{1em}
 
+As mutations occur by coincidence equation \ref{averagemutationrate}
+is only valid for sufficiently high values of $\bar{m}$.
 By using the definition of the average, equation
 \ref{averagemutationrate} is equivalent to
 
@@ -368,13 +372,18 @@ y: &  Number of Y-STR values per haplotype
 \end{tabular}
 \vspace{1em}
 
-Again we try out the formula by a simple example. The table
-on page \pageref{tblmodalhaplotype} contains three haplotypes
-on the 6-marker scale ($N=3$, $y=6$). Peter and Carl differ
-by one mutation to the modal haplotype and Clas by two. We
-use a generation distance of 25 years ($d=25$) and the average
-mutation rate on the 6-marker scale is 0.002\cite{Kly09}. So
-we get
+The following example shows how to use the formula but it
+is intended as an easy to understand educational exercise.
+For real world applications more haplotypes (rule of thumb:
+use at least 5) and a bigger number of average mutations
+(4 or more is quite good) is needed. 
+
+The table on page \pageref{tblmodalhaplotype} contains three
+haplotypes on the 6-marker scale ($N=3$, $y=6$). Peter and
+Carl differ by one mutation to the modal haplotype and Clas
+by two. We use a generation distance of 25 years ($d=25$)
+and the average mutation rate on the 6-marker scale is
+0.002\cite{Kly09}. So we get
 
 \begin{equation}
 t = 25 \cdot \frac{1 + 1 + 2}{3 \cdot 0.002 \cdot 6} = 2778\ years

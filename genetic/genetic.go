@@ -497,7 +497,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS464exists && mutationRates.Value(DYS464end) != 0 {
-		distances[DYS464end] = distancePalindromic(ystr1, ystr2, DYS464start, DYS464end)
+		distances[DYS464end] = distancePalindromic(ystr1, ystr2, DYS464start, DYS464end) / mutationRates.Value(DYS464end)
 		nCompared += 4
 	}
 	for i := DYS464end + 1; i < YCAIIa; i++ {
@@ -521,7 +521,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if CDYexists && mutationRates.Value(CDYend) != 0 {
-		distances[CDYend] = distancePalindromic(ystr1, ystr2, CDYstart, CDYend)
+		distances[CDYend] = distancePalindromic(ystr1, ystr2, CDYstart, CDYend) / mutationRates.Value(CDYend)
 		nCompared += 2
 	}
 	for i := CDYend + 1; i < DYF395S1start; i++ {
@@ -531,7 +531,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYF395S1exists && mutationRates.Value(DYF395S1end) != 0 {
-		distances[DYF395S1end] = distancePalindromic(ystr1, ystr2, DYF395S1start, DYF395S1end)
+		distances[DYF395S1end] = distancePalindromic(ystr1, ystr2, DYF395S1start, DYF395S1end) / mutationRates.Value(DYF395S1end)
 		nCompared += 2
 	}
 	for i := DYF395S1end + 1; i < DYS413start; i++ {
@@ -541,7 +541,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS413exists && mutationRates.Value(DYS413end) != 0 {
-		distances[DYS413end] = distancePalindromic(ystr1, ystr2, DYS413start, DYS413end)
+		distances[DYS413end] = distancePalindromic(ystr1, ystr2, DYS413start, DYS413end) / mutationRates.Value(DYS413end)
 		nCompared += 2
 	}
 	for i := DYS413end + 1; i < Nmarkers; i++ {
