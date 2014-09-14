@@ -92,13 +92,32 @@ func main() {
 		}
 	}
 
+	// Calculate a distance matrix if the modal value should be
+	// calculated or if the matrix should be written to a file.
+	var dm *genetic.DistanceMatrix
+	if *phylipout != "" || *modal == true {
+		dm = genetic.NewDistanceMatrix(persons, mutationRates, genetic.Distance)
+		dm = dm.Years(*gendist, *cal)
+	}
+
 	// Write distance matrix in phylip compatible format.
 	if *phylipout != "" {
-		dm := genetic.NewDistanceMatrix(persons, mutationRates, genetic.Distance)
-		err = genfiles.WriteDistanceMatrix(*phylipout, persons, dm.Years(*gendist, *cal))
+		err = genfiles.WriteDistanceMatrix(*phylipout, persons, dm)
 		if err != nil {
-			fmt.Printf("Error writing phylip file %v.\n", err)
-			os.Exit(1)
+			fmt.Printf("Error writing PHYLIP file %v.\n", err)
 		}
+	}
+
+	// Print average distance and standard deviation from modal haplotype.
+	if *modal == true {
+		// Calculate the average distance from the modal haplotype.
+		// The modal haplotype is the last in the distance matrix.
+		// The last entry is the distance to itself. So it has to be removed.
+		m, s, err := genetic.Average(dm.Values[dm.Size-1][0 : dm.Size-1])
+		if err != nil {
+			fmt.Printf("Error calculating average and standard deviation, %v.\n", err)
+		}
+		fmt.Printf("Average distance from modal haplotype: %.2f \u00B1 %.2f\n", m, s)
+		fmt.Printf("No correction for Poisson distribution and back mutations.\n")
 	}
 }

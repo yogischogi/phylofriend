@@ -2,6 +2,7 @@
 package genetic
 
 import (
+	"errors"
 	"math"
 	"strconv"
 )
@@ -753,4 +754,22 @@ func Anonymize(persons []*Person) []*Person {
 		result[i].Name10 = string(underscores) + nameNo
 	}
 	return result
+}
+
+// Average calculates the average and the standard deviation
+// for a slice of values.
+// The standard deviation is calculated by using the following
+// estimate: s = Sqrt(1/(N-1) * Sum((x_i - m)^2))
+func Average(values []float64) (m, s float64, err error) {
+	if len(values) < 2 {
+		return m, s, errors.New("too few values")
+	}
+	N := float64(len(values))
+	m = sum(values) / N
+	d := 0.0
+	for i, _ := range values {
+		d += (values[i] - m) * (values[i] - m)
+	}
+	s = math.Sqrt(d / (N - 1))
+	return m, s, err
 }
