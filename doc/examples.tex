@@ -98,18 +98,18 @@ have to calibrate your data especially if you want to
 calculate in years.
 
 Phylofriend provides two options for data calibration:
-\emph{gendist}, the generation distance in years and
+\emph{gentime}, the generation time in years and
 \emph{cal} an additional calibration factor. Internally
 they are just multiplied together but using two separate
 factors seems more convenient for typical use cases.
 
-The default value for the generation distance is 25 years.
+The default value for the generation time is 25 years.
 For time spans over the last few hundred years a generation
-distance of 30 years often yields better results. This can
+time of 30 years often yields better results. This can
 be done by
 
 \noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
--gendist 30}
+-gentime 30}
 
 It is often difficult to calibrate data because you need a
 reliable paper trail or a well defined historic event. If
@@ -131,11 +131,11 @@ have tested on different sets of markers.
 If you want to count mutations for example on a 37 marker
 scale, you must multiply Phylofriend's internal results with
 37. The easiest way to archive this is by misusing the
-\emph{gendist} option. 
+\emph{gentime} option. 
 
 \noindent\texttt{phylofriend -personsin persons.csv\\
 -mrin code.google.com/p/phylofriend/mutationrates/37-1.txt\\
--phylipout distancecount.txt -gendist 37}
+-phylipout distancecount.txt -gentime 37}
 
 
 \subsection{Extract Data from a Spreadsheet}

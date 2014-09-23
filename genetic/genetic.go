@@ -65,6 +65,28 @@ func (p *Person) anonymize() *Person {
 		YstrMarkers: p.YstrMarkers}
 }
 
+// markerSet returns a person who's marker set has been reduced
+// to the specified number of values.
+// If the person has not been tested for all markers isComplete = false.
+func (p *Person) markerSet(nValues int) (person *Person, isComplete bool) {
+	person = new(Person)
+	*person = *p
+	isComplete = true
+	// Delete all marker values outside the specified set.
+	for i := nValues; i < Nmarkers; i++ {
+		person.YstrMarkers.SetValue(i, 0)
+	}
+	// Check if the marker set is complete
+	for i := 0; i < nValues; i++ {
+		if person.YstrMarkers.Value(i) == 0 &&
+			(i <= DYS464start || i >= DYS464end) {
+			isComplete = false
+			break
+		}
+	}
+	return person, isComplete
+}
+
 // YstrMarkers contains values for 111 Y-STR markers in
 // FamilyTreeDNA order (2014-06-25).
 // For more information on markers take a look at
@@ -769,6 +791,24 @@ func Reduce(persons []*Person, factor int) ([]*Person, error) {
 	}
 	for i, _ := range result {
 		result[i] = persons[i*factor]
+	}
+	return result, nil
+}
+
+// ReduceToMarkerSet reduces a slice of persons to only those
+// persons who have tested at least for the specified number of markers.
+// Additional markers are set to 0.
+// If the result contains less than two persons this function returns an error.
+func ReduceToMarkerSet(persons []*Person, nValues int) ([]*Person, error) {
+	result := make([]*Person, 0, len(persons))
+	for _, p := range persons {
+		next, isComplete := p.markerSet(nValues)
+		if isComplete == true {
+			result = append(result, next)
+		}
+	}
+	if len(result) < 2 {
+		return result, errors.New("not enough persons who have tested for so many markers")
 	}
 	return result, nil
 }

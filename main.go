@@ -19,11 +19,11 @@ func main() {
 		mrin      = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		phylipout = flag.String("phylipout", "", "Output filename for PHYLIP distance matrix.")
 		txtout    = flag.String("txtout", "", "Output filename for persons in text format.")
-		nvalues   = flag.Int("nvalues", 67, "Number of Y-STR values to write into text file.")
+		nvalues   = flag.Int("nvalues", 0, "Uses only persons who have tested at least for the given number of markers.")
 		mrout     = flag.String("mrout", "", "Filename for the export of mutation rates.")
 		anonymize = flag.Bool("anonymize", false, "Anonymizes persons' private data.")
 		cal       = flag.Float64("cal", 1, "Calibration factor for PHYLIP output.")
-		gendist   = flag.Float64("gendist", 25, "Generation distance in years.")
+		gentime   = flag.Float64("gentime", 25, "Generation time in years.")
 		modal     = flag.Bool("modal", false, "Creates modal haplotype.")
 		reduce    = flag.Int("reduce", 1, "Reduces the number of persons (for big trees).")
 	)
@@ -73,6 +73,15 @@ func main() {
 		os.Exit(0)
 	}
 
+	// Include only persons who have tested at least for the given number of markers.
+	if *nvalues > 0 {
+		persons, err = genetic.ReduceToMarkerSet(persons, *nvalues)
+		if err != nil {
+			fmt.Printf("Error reducing persons for the specified number of markers, %v.\n", err)
+			os.Exit(1)
+		}
+	}
+
 	// Reduce amount of data.
 	// This is for cases in which the tree gets too large.
 	if *reduce > 1 {
@@ -96,7 +105,11 @@ func main() {
 
 	// Write persons data in text format.
 	if *txtout != "" {
-		err = genfiles.WritePersonsAsTXT(*txtout, persons, *nvalues)
+		if *nvalues > 0 {
+			err = genfiles.WritePersonsAsTXT(*txtout, persons, *nvalues)
+		} else {
+			err = genfiles.WritePersonsAsTXT(*txtout, persons, genetic.Nmarkers)
+		}
 		if err != nil {
 			fmt.Printf("Error writing persons data to text file %v.\n", err)
 			os.Exit(1)
@@ -108,7 +121,7 @@ func main() {
 	var dm *genetic.DistanceMatrix
 	if *phylipout != "" || *modal == true {
 		dm = genetic.NewDistanceMatrix(persons, mutationRates, genetic.Distance)
-		dm = dm.Years(*gendist, *cal)
+		dm = dm.Years(*gentime, *cal)
 	}
 
 	// Write distance matrix in phylip compatible format.
