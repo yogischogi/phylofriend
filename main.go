@@ -25,6 +25,7 @@ func main() {
 		cal       = flag.Float64("cal", 1, "Calibration factor for PHYLIP output.")
 		gendist   = flag.Float64("gendist", 25, "Generation distance in years.")
 		modal     = flag.Bool("modal", false, "Creates modal haplotype.")
+		reduce    = flag.Int("reduce", 1, "Reduces the number of persons (for big trees).")
 	)
 	flag.Parse()
 
@@ -70,6 +71,16 @@ func main() {
 		// Exit program because all following operations
 		// depend on persons data.
 		os.Exit(0)
+	}
+
+	// Reduce amount of data.
+	// This is for cases in which the tree gets too large.
+	if *reduce > 1 {
+		persons, err = genetic.Reduce(persons, *reduce)
+		if err != nil {
+			fmt.Printf("Error reducing amount of persons, %v.\n", err)
+			os.Exit(1)
+		}
 	}
 
 	// Anonymize persons data.

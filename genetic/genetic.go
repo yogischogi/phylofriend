@@ -756,6 +756,23 @@ func Anonymize(persons []*Person) []*Person {
 	return result
 }
 
+// Reduce reduces the number of persons by dividing through factor.
+// The method returns every factor-th person from the
+// input data set and returns an error if the reduced data
+// set contains less than two persons.
+// This fuction is intended for large data sets that take a
+// long time to process.
+func Reduce(persons []*Person, factor int) ([]*Person, error) {
+	result := make([]*Person, len(persons)/factor)
+	if len(result) < 2 {
+		return result, errors.New("reduction too large")
+	}
+	for i, _ := range result {
+		result[i] = persons[i*factor]
+	}
+	return result, nil
+}
+
 // Average calculates the average and the standard deviation
 // for a slice of values.
 // The standard deviation is calculated by using the following
