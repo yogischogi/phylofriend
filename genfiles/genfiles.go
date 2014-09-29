@@ -102,14 +102,38 @@ func personFromFields(fields []string, nameIndex int) (*genetic.Person, error) {
 func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 	var markers genetic.YstrMarkers
 
-	// TODO: Make sure that multi copy and palindromic markers
-	// have the right length. This might be problematic because
-	// some users maintain special spread sheets which hold the
-	// data in non FamilyTreeDNA format, e.g. each marker in a
-	// single column.
+	// Trim whitespaces and determine if data is in Family
+	// Tree DNA notation or from a spreadsheet where all values
+	// are stored in single columns.
+	isFTDNA := false
+	for i, _ := range fields {
+		fields[i] = strings.TrimSpace(fields[i])
+		if strings.Contains(fields[i], "-") {
+			isFTDNA = true
+		}
+	}
 
-	// Copy all fields together and separate them by -, because
-	// FamilyTreeDNA uses - as a separator for multicopy markers.
+	// Make sure that DYS464 contains not more than four values.
+	if isFTDNA {
+		DYS464pos := 19
+		values := strings.Split(fields[DYS464pos], "-")
+		if len(values) > 4 {
+			// Copy first four values back into DYS464 field.
+			fields[DYS464pos] = values[0] + "-" + values[1] + "-" + values[2] + "-" + values[3]
+			// Store extra DYS464 values in the upper storage area for DYS464.
+			for i := 4; i < len(values); i++ {
+				value, err := stringToSTR(fields[i])
+				if err != nil {
+					return markers, err
+
+				}
+				markers.SetValue(genetic.DYS464extStart+i-4, value)
+			}
+		}
+	}
+
+	// Copy all fields together and separate them by "-", because
+	// FamilyTreeDNA uses "-" as a separator for multicopy markers.
 	var buffer bytes.Buffer
 	for i := 0; i < len(fields)-1; i++ {
 		buffer.Write([]byte(fields[i]))
@@ -117,28 +141,36 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 	}
 	buffer.Write([]byte(fields[len(fields)-1]))
 
-	// Extract the fields again using - as a separator.
+	// Extract the fields again using "-" as a separator.
 	// Thus multicopy markers are separated into several fields.
 	reader := csv.NewReader(&buffer)
 	reader.Comma = '-'
 	strValues, _ := reader.Read()
 
-	// Convert string values to YstrMarkers
+	// Convert string values to YstrMarkers.
 	for i, strValue := range strValues {
-		strValue = strings.TrimSpace(strValue)
-		if strValue == "" {
-			markers.SetValue(i, 0)
-		} else if strValue == "O" {
-			markers.SetValue(i, 0)
-		} else {
-			value, err := strconv.ParseFloat(strValue, 64)
-			if err != nil {
-				return markers, err
-			}
-			markers.SetValue(i, value)
+		value, err := stringToSTR(strValue)
+		if err != nil {
+			return markers, err
 		}
+		markers.SetValue(i, value)
 	}
 	return markers, nil
+}
+
+// stringToStr converts an Y-STR value in string format to a number.
+func stringToSTR(value string) (float64, error) {
+	var result float64
+	var err error
+	if value == "" || value == "O" {
+		result = 0
+	} else {
+		result, err = strconv.ParseFloat(value, 64)
+		if err != nil {
+			return result, err
+		}
+	}
+	return result, nil
 }
 
 // ReadPersonsFromTXT reads persons' data from a text file.

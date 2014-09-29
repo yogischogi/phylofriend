@@ -11,6 +11,15 @@ const (
 	// Nmarkers denotes the number of Y-STR markers available to the program.
 	Nmarkers = 111
 
+	// NDYS464ext denotes the number of extra values for the DYS464 marker.
+	// 98.5% of all people do not have more than four values at the DYS464 marker
+	// (http://www.isogg.org/wiki/DYS_464).
+	// Currently many people use spreadsheets which support only four
+	// values for DYS464. To stay compatible Phylofriend also uses
+	// 4 markers at the standard DYS464 position and adds the extra
+	// markers at the end.
+	NDYS464ext = 3
+
 	// Marker positions:
 
 	// DYS389i is a marker that is included in DYS389ii.
@@ -19,14 +28,16 @@ const (
 
 	// The program uses the infinite allele mutation model
 	// for these palindromic markers.
-	DYS464start   = 21
-	DYS464end     = 24
-	CDYstart      = 33
-	CDYend        = 34
-	DYF395S1start = 39
-	DYF395S1end   = 40
-	DYS413start   = 48
-	DYS413end     = 49
+	DYS464start    = 21
+	DYS464end      = 24
+	DYS464extStart = Nmarkers
+	DYS464extEnd   = Nmarkers + NDYS464ext - 1
+	CDYstart       = 33
+	CDYend         = 34
+	DYF395S1start  = 39
+	DYF395S1end    = 40
+	DYS413start    = 48
+	DYS413end      = 49
 
 	// For YCAII the infinite allele mutation model is used.
 	YCAIIa = 27
@@ -203,13 +214,16 @@ type YstrMarkers struct {
 	DYS510,
 	DYS434,
 	DYS461,
-	DYS435 float64
+	DYS435,
+	DYS464e,
+	DYS464f,
+	DYS464g float64
 }
 
 // addressOf is a helper function for Value and SetValue to
 // allow array like access to the YstrMarkers struct.
 func (m *YstrMarkers) addressOf(i int) *float64 {
-	markers := [Nmarkers]*float64{
+	markers := [Nmarkers + NDYS464ext]*float64{
 		&m.DYS393,
 		&m.DYS390,
 		&m.DYS19,
@@ -320,7 +334,10 @@ func (m *YstrMarkers) addressOf(i int) *float64 {
 		&m.DYS510,
 		&m.DYS434,
 		&m.DYS461,
-		&m.DYS435}
+		&m.DYS435,
+		&m.DYS464e,
+		&m.DYS464f,
+		&m.DYS464g}
 	return markers[i]
 }
 
