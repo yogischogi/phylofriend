@@ -122,10 +122,9 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 			fields[DYS464pos] = values[0] + "-" + values[1] + "-" + values[2] + "-" + values[3]
 			// Store extra DYS464 values in the upper storage area for DYS464.
 			for i := 4; i < len(values); i++ {
-				value, err := stringToSTR(fields[i])
+				value, err := stringToSTR(values[i])
 				if err != nil {
 					return markers, err
-
 				}
 				markers.SetValue(genetic.DYS464extStart+i-4, value)
 			}

@@ -18,7 +18,7 @@ const (
 	// values for DYS464. To stay compatible Phylofriend also uses
 	// 4 markers at the standard DYS464 position and adds the extra
 	// markers at the end.
-	NDYS464ext = 3
+	NDYS464ext = 4
 
 	// Marker positions:
 
@@ -217,7 +217,8 @@ type YstrMarkers struct {
 	DYS435,
 	DYS464e,
 	DYS464f,
-	DYS464g float64
+	DYS464g,
+	DYS464h float64
 }
 
 // addressOf is a helper function for Value and SetValue to
@@ -337,7 +338,8 @@ func (m *YstrMarkers) addressOf(i int) *float64 {
 		&m.DYS435,
 		&m.DYS464e,
 		&m.DYS464f,
-		&m.DYS464g}
+		&m.DYS464g,
+		&m.DYS464h}
 	return markers[i]
 }
 
@@ -349,6 +351,16 @@ func (m *YstrMarkers) Value(i int) float64 {
 // SetValue sets the i-th value of a set of Y-STR markers.
 func (m *YstrMarkers) SetValue(i int, value float64) {
 	*m.addressOf(i) = value
+}
+
+// slice returns a slice of Y-STR values ranging from
+// a to b, exclusive b.
+func (m *YstrMarkers) slice(a, b int) []float64 {
+	result := make([]float64, b-a)
+	for i := 0; i < b-a; i++ {
+		result[i] = m.Value(a + i)
+	}
+	return result
 }
 
 // MutationRates is a set of mutation rates that are
@@ -517,7 +529,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS389exists && mutationRates.Value(DYS389i) != 0 {
-		distances[DYS389i] = distanceInfiniteAllele(ystr1, ystr2, DYS389i) / mutationRates.Value(DYS389i)
+		distances[DYS389i] = distanceInfiniteAllele(ystr1.Value(DYS389i), ystr2.Value(DYS389i)) / mutationRates.Value(DYS389i)
 		nCompared++
 	}
 	for i := DYS389i + 1; i < DYS389ii; i++ {
@@ -537,7 +549,11 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS464exists && mutationRates.Value(DYS464end) != 0 {
-		distances[DYS464end] = distancePalindromic(ystr1, ystr2, DYS464start, DYS464end) / mutationRates.Value(DYS464end)
+		// For compatibilty reasons DYS464 is stored at different range positions.
+		// So we need to put all values back together.
+		values1 := append(ystr1.slice(DYS464start, DYS464end+1), ystr1.slice(DYS464extStart, DYS464extEnd+1)...)
+		values2 := append(ystr2.slice(DYS464start, DYS464end+1), ystr2.slice(DYS464extStart, DYS464extEnd+1)...)
+		distances[DYS464end] = distancePalindromic(values1, values2) / mutationRates.Value(DYS464end)
 		nCompared += 4
 	}
 	for i := DYS464end + 1; i < YCAIIa; i++ {
@@ -547,11 +563,11 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if YCAIIexists && mutationRates.Value(YCAIIa) != 0 {
-		distances[YCAIIa] = distanceInfiniteAllele(ystr1, ystr2, YCAIIa) / mutationRates.Value(YCAIIa)
+		distances[YCAIIa] = distanceInfiniteAllele(ystr1.Value(YCAIIa), ystr2.Value(YCAIIa)) / mutationRates.Value(YCAIIa)
 		nCompared++
 	}
 	if YCAIIexists && mutationRates.Value(YCAIIb) != 0 {
-		distances[YCAIIb] = distanceInfiniteAllele(ystr1, ystr2, YCAIIb) / mutationRates.Value(YCAIIb)
+		distances[YCAIIb] = distanceInfiniteAllele(ystr1.Value(YCAIIb), ystr2.Value(YCAIIb)) / mutationRates.Value(YCAIIb)
 		nCompared++
 	}
 	for i := YCAIIb + 1; i < CDYstart; i++ {
@@ -561,7 +577,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if CDYexists && mutationRates.Value(CDYend) != 0 {
-		distances[CDYend] = distancePalindromic(ystr1, ystr2, CDYstart, CDYend) / mutationRates.Value(CDYend)
+		distances[CDYend] = distancePalindromic(ystr1.slice(CDYstart, CDYend+1), ystr2.slice(CDYstart, CDYend+1)) / mutationRates.Value(CDYend)
 		nCompared += 2
 	}
 	for i := CDYend + 1; i < DYF395S1start; i++ {
@@ -571,7 +587,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYF395S1exists && mutationRates.Value(DYF395S1end) != 0 {
-		distances[DYF395S1end] = distancePalindromic(ystr1, ystr2, DYF395S1start, DYF395S1end) / mutationRates.Value(DYF395S1end)
+		distances[DYF395S1end] = distancePalindromic(ystr1.slice(DYF395S1start, DYF395S1end+1), ystr2.slice(DYF395S1start, DYF395S1end+1)) / mutationRates.Value(DYF395S1end)
 		nCompared += 2
 	}
 	for i := DYF395S1end + 1; i < DYS413start; i++ {
@@ -581,7 +597,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS413exists && mutationRates.Value(DYS413end) != 0 {
-		distances[DYS413end] = distancePalindromic(ystr1, ystr2, DYS413start, DYS413end) / mutationRates.Value(DYS413end)
+		distances[DYS413end] = distancePalindromic(ystr1.slice(DYS413start, DYS413end+1), ystr2.slice(DYS413start, DYS413end+1)) / mutationRates.Value(DYS413end)
 		nCompared += 2
 	}
 	for i := DYS413end + 1; i < Nmarkers; i++ {
@@ -594,12 +610,11 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 }
 
 // distanceInfiniteAllele calculates the genetic distance between
-// two sets of Y-STR markers at position a. It uses the infinite
-// allele mutation model
+// two Y-STR values. It uses the infinite allele mutation model
 // (http://nitro.biosci.arizona.edu/ftDNA/models.html)
 // in which single marker differences are counted as one.
-func distanceInfiniteAllele(ystr1, ystr2 YstrMarkers, a int) float64 {
-	if ystr1.Value(a) != ystr2.Value(a) {
+func distanceInfiniteAllele(ystr1, ystr2 float64) float64 {
+	if ystr1 != ystr2 {
 		return 1
 	} else {
 		return 0
@@ -626,22 +641,24 @@ func distanceDys389ii(ystr1, ystr2 YstrMarkers, a, b int) float64 {
 // the calculation described at genebase
 // (http://www.genebase.com/learning/article/46).
 //
-// ystr1 and ystr2 contain a full set of Y-STR markers from two persons.
-// a and b denote start and end position of the palindromic marker
-// to be used for calculation.
-func distancePalindromic(ystr1, ystr2 YstrMarkers, a, b int) float64 {
+// ystr1 and ystr2 contain the palindromic values for each person.
+func distancePalindromic(ystr1, ystr2 []float64) float64 {
 	var distance float64 = 0
-	// Create two lists of values
-	list1 := make([]float64, 0, b-a+1)
-	list2 := make([]float64, 0, b-a+1)
-	for i := a; i <= b; i++ {
-		if ystr1.Value(i) > 0 {
-			list1 = append(list1, ystr1.Value(i))
-		}
-		if ystr2.Value(i) > 0 {
-			list2 = append(list2, ystr2.Value(i))
+
+	// Create two lists that contain only values > 0.
+	list1 := make([]float64, 0, len(ystr1))
+	for _, value := range ystr1 {
+		if value > 0 {
+			list1 = append(list1, value)
 		}
 	}
+	list2 := make([]float64, 0, len(ystr2))
+	for _, value := range ystr2 {
+		if value > 0 {
+			list2 = append(list2, value)
+		}
+	}
+
 	// Different lengths count as 1.
 	if len(list1) != len(list2) {
 		distance = 1
@@ -650,7 +667,7 @@ func distancePalindromic(ystr1, ystr2 YstrMarkers, a, b int) float64 {
 			list1, list2 = list2, list1
 		}
 	}
-	// Check every key in set1 against keys of set2.
+	// Compare each value in set1 against values of set2.
 	for i := 0; i < len(list1); i++ {
 		isMatchingMarker := false
 		for j := 0; j < len(list2); j++ {
