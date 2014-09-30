@@ -22,7 +22,14 @@ import (
 // The function will try to recognize and remove them.
 // The first entry of each line containing person data
 // must be a unique ID.
-// Missing Y-STR values are set to 0.
+// The Y-STR values must be in Family Tree DNA order.
+// Missing values are set to 0.
+//
+// Some people use spreadsheets where DYS464 is stored in
+// four different columns. Family Tree DNA stores it in a
+// single column where the values are separated by "-".
+// The function tries to recognize the storage format and
+// to handle it appropriately.
 //
 // namesCol is the number of the colum used for the person's
 // Name10 field. This will be used as a name when a genetic
@@ -102,24 +109,20 @@ func personFromFields(fields []string, nameIndex int) (*genetic.Person, error) {
 func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 	var markers genetic.YstrMarkers
 
-	// Trim whitespaces and determine if data is in Family
-	// Tree DNA notation or from a spreadsheet where all values
-	// are stored in single columns.
-	isFTDNA := false
+	// Trim whitespaces.
 	for i, _ := range fields {
 		fields[i] = strings.TrimSpace(fields[i])
-		if strings.Contains(fields[i], "-") {
-			isFTDNA = true
-		}
 	}
 
-	// Make sure that DYS464 contains not more than four values.
-	if isFTDNA {
-		DYS464pos := 19
+	// Make sure that DYS464 contains exactly four values.
+	// Many spreadsheets contain four separate columns for DYS464
+	// but in Family Tree DNA notation it is denoted like "15-15-17-18".
+	DYS464pos := 19
+	if strings.Contains(fields[DYS464pos], "-") {
 		values := strings.Split(fields[DYS464pos], "-")
 		if len(values) > 4 {
 			// Copy first four values back into DYS464 field.
-			fields[DYS464pos] = values[0] + "-" + values[1] + "-" + values[2] + "-" + values[3]
+			fields[DYS464pos] = strings.Join(values[0:4], "-")
 			// Store extra DYS464 values in the upper storage area for DYS464.
 			for i := 4; i < len(values); i++ {
 				value, err := stringToSTR(values[i])
@@ -128,21 +131,20 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 				}
 				markers.SetValue(genetic.DYS464extStart+i-4, value)
 			}
+		} else if len(values) < 4 {
+			complete := make([]string, 4)
+			copy(complete, values)
+			fields[DYS464pos] = strings.Join(complete, "-")
 		}
 	}
 
-	// Copy all fields together and separate them by "-", because
+	// Concatenate all fields together and separate them by "-", because
 	// FamilyTreeDNA uses "-" as a separator for multicopy markers.
-	var buffer bytes.Buffer
-	for i := 0; i < len(fields)-1; i++ {
-		buffer.Write([]byte(fields[i]))
-		buffer.WriteRune('-')
-	}
-	buffer.Write([]byte(fields[len(fields)-1]))
+	concatFields := strings.Join(fields, "-")
 
 	// Extract the fields again using "-" as a separator.
-	// Thus multicopy markers are separated into several fields.
-	reader := csv.NewReader(&buffer)
+	// Thus all markers values are separated into individual fields.
+	reader := csv.NewReader(strings.NewReader(concatFields))
 	reader.Comma = '-'
 	strValues, _ := reader.Read()
 

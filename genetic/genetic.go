@@ -529,7 +529,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS389exists && mutationRates.Value(DYS389i) != 0 {
-		distances[DYS389i] = distanceInfiniteAllele(ystr1.Value(DYS389i), ystr2.Value(DYS389i)) / mutationRates.Value(DYS389i)
+		distances[DYS389i] = math.Abs(ystr1.Value(DYS389i)-ystr2.Value(DYS389i)) / mutationRates.Value(DYS389i)
 		nCompared++
 	}
 	for i := DYS389i + 1; i < DYS389ii; i++ {
@@ -539,7 +539,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		}
 	}
 	if DYS389exists && mutationRates.Value(DYS389ii) != 0 {
-		distances[DYS389ii] = distanceDys389ii(ystr1, ystr2, DYS389i, DYS389ii) / mutationRates.Value(DYS389i)
+		distances[DYS389ii] = distanceDYS389ii(ystr1.Value(DYS389i), ystr1.Value(DYS389ii), ystr2.Value(DYS389i), ystr2.Value(DYS389ii)) / mutationRates.Value(DYS389ii)
 		nCompared++
 	}
 	for i := DYS389ii + 1; i < DYS464start; i++ {
@@ -621,16 +621,13 @@ func distanceInfiniteAllele(ystr1, ystr2 float64) float64 {
 	}
 }
 
-// distanceDys389ii calculates the genetic distance for the DYS389ii
-// marker. This marker is a special case because DYS389i is included
-// in DYS389ii (http://www.genebase.com/learning/article/46).
+// distanceDYS389ii calculates the genetic distance for the DYS389ii
+// marker. This marker is a special case because it includes DYS389i
+// (http://www.genebase.com/learning/article/46).
 //
-// a: Position of DYS389i
-//
-// b: Position of DYS389ii
-func distanceDys389ii(ystr1, ystr2 YstrMarkers, a, b int) float64 {
-	distii := math.Abs((ystr1.Value(b) - ystr1.Value(a)) - (ystr2.Value(b) - ystr2.Value(a)))
-	return distii
+// The input parameters are the DYS389 values for persons a and b.
+func distanceDYS389ii(aDYS389i, aDYS389ii, bDYS389i, bDYS389ii float64) float64 {
+	return math.Abs((aDYS389ii - aDYS389i) - (bDYS389ii - bDYS389i))
 }
 
 // distancePalincromic calculates the genetic distance for palindromic markers
