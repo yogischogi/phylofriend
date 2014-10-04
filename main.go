@@ -15,7 +15,7 @@ func main() {
 	// Command line flags.
 	var (
 		personsin = flag.String("personsin", "", "Input filename (.txt or .csv).")
-		namescol  = flag.Int("namescol", 1, "Column number for names in CSV file.")
+		labelcol  = flag.Int("labelcol", 1, "Column number for labels in CSV file.")
 		mrin      = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		phylipout = flag.String("phylipout", "", "Output filename for PHYLIP distance matrix.")
 		txtout    = flag.String("txtout", "", "Output filename for persons in text format.")
@@ -59,7 +59,7 @@ func main() {
 	// Read persons from file or exit if no file is provided.
 	if *personsin != "" {
 		if strings.HasSuffix(strings.ToLower(*personsin), ".csv") {
-			persons, err = genfiles.ReadPersonsFromCSV(*personsin, *namescol-1)
+			persons, err = genfiles.ReadPersonsFromCSV(*personsin, *labelcol-1)
 		} else {
 			persons, err = genfiles.ReadPersonsFromTXT(*personsin)
 		}

@@ -55,10 +55,11 @@ type DistanceFunc func(YstrMarkers, YstrMarkers, YstrMarkers) float64
 type Person struct {
 	ID   string
 	Name string
-	// Name10 is a name that is exactly 10 characters long
-	// and contains no Unicode characters. This is used to
-	// be compatible with PHYLIP and the Newick tree format.
-	Name10   string
+	// Label is used as this person's label.
+	// A label must be exactly 10 characters long and may
+	// only contain 8-bit characters. This is to be
+	// compatible with PHYLIP and the Newick tree format.
+	Label    string
 	Ancestor string
 	Origin   string
 	YstrMarkers
@@ -70,7 +71,7 @@ func (p *Person) anonymize() *Person {
 	return &Person{
 		ID:          "",
 		Name:        "",
-		Name10:      "__________",
+		Label:       "__________",
 		Ancestor:    "",
 		Origin:      "",
 		YstrMarkers: p.YstrMarkers}
@@ -689,7 +690,7 @@ func ModalHaplotype(persons []*Person) *Person {
 	modal := Person{
 		ID:       "modal",
 		Name:     "modal",
-		Name10:   "_____modal",
+		Label:    "_____modal",
 		Ancestor: "modal",
 		Origin:   "modal",
 	}
@@ -791,7 +792,7 @@ func (dm *DistanceMatrix) Years(generationDistance, calibrationFactor float64) *
 	return result
 }
 
-// Anonymize anonymizes the persons data and replaces the name
+// Anonymize anonymizes the persons data and replaces the label
 // by a number.
 func Anonymize(persons []*Person) []*Person {
 	result := make([]*Person, len(persons))
@@ -804,7 +805,7 @@ func Anonymize(persons []*Person) []*Person {
 		for j, _ := range underscores {
 			underscores[j] = '_'
 		}
-		result[i].Name10 = string(underscores) + nameNo
+		result[i].Label = string(underscores) + nameNo
 	}
 	return result
 }

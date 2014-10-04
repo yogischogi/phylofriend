@@ -31,10 +31,9 @@ import (
 // The function tries to recognize the storage format and
 // to handle it appropriately.
 //
-// namesCol is the number of the colum used for the person's
-// Name10 field. This will be used as a name when a genetic
-// distance matrix is written.
-func ReadPersonsFromCSV(filename string, namesCol int) ([]*genetic.Person, error) {
+// labelCol is the number of the colum used as a label for
+// the person.
+func ReadPersonsFromCSV(filename string, labelCol int) ([]*genetic.Person, error) {
 	infile, err := os.Open(filename)
 	if err != nil {
 		return nil, err
@@ -54,7 +53,7 @@ func ReadPersonsFromCSV(filename string, namesCol int) ([]*genetic.Person, error
 		// Try to extract person data from a record.
 		// CSV lines often contain non person data.
 		// So an error here happens often and is ignored.
-		person, err := personFromFields(record, namesCol)
+		person, err := personFromFields(record, labelCol)
 		if err == nil {
 			persons = append(persons, person)
 		}
@@ -64,9 +63,9 @@ func ReadPersonsFromCSV(filename string, namesCol int) ([]*genetic.Person, error
 
 // personFromFields creates a person from a slice of strings.
 //
-// The first field must contain the ID of the person. nameIndex
-// is the field's index that is used for the person's Name10 field.
-func personFromFields(fields []string, nameIndex int) (*genetic.Person, error) {
+// The first field must contain the ID of the person. labelIndex
+// is the field's index that is used for the person's Label field.
+func personFromFields(fields []string, labelIndex int) (*genetic.Person, error) {
 	var person genetic.Person
 	var err error
 
@@ -99,7 +98,7 @@ func personFromFields(fields []string, nameIndex int) (*genetic.Person, error) {
 		return nil, errors.New("could not determine person ID")
 	}
 
-	person.Name10 = nameToName10(strings.TrimSpace(fields[nameIndex]))
+	person.Label = stringToLabel(strings.TrimSpace(fields[labelIndex]))
 	person.YstrMarkers, err = extractYstrMarkers(fields[resultsStart:])
 	return &person, err
 }
@@ -177,7 +176,7 @@ func stringToSTR(value string) (float64, error) {
 // ReadPersonsFromTXT reads persons' data from a text file.
 // The file may contain comment lines starting with //.
 // The first entry of each line is used for the person's
-// Name10 field that is used for output in distance matrices.
+// Label field that is used for output in distance matrices.
 // Missing Y-STR values are set to 0.
 func ReadPersonsFromTXT(filename string) ([]*genetic.Person, error) {
 	lines := make([]string, 0, 1000)
@@ -208,7 +207,7 @@ func ReadPersonsFromTXT(filename string) ([]*genetic.Person, error) {
 	for i, _ := range lines {
 		fields := strings.Fields(lines[i])
 		persons[i] = new(genetic.Person)
-		persons[i].Name10 = fields[0]
+		persons[i].Label = fields[0]
 		nValues := len(fields) - 1
 		if genetic.Nmarkers < nValues {
 			nValues = genetic.Nmarkers
@@ -243,7 +242,7 @@ func WriteDistanceMatrix(filename string, persons []*genetic.Person, matrix *gen
 	// Write lines
 	for row := 0; row < matrix.Size; row++ {
 		// Write name
-		name := persons[row].Name10
+		name := persons[row].Label
 		_, err = writer.WriteString(name)
 		if err != nil {
 			return err
@@ -266,7 +265,7 @@ func WriteDistanceMatrix(filename string, persons []*genetic.Person, matrix *gen
 }
 
 // WritePersonsAsTXT writes person's genetic data to a file.
-// The first entry of each line is the person's Name10 field.
+// The first entry of each line is the person's Label field.
 // All entries are separated by tabs so that the content of
 // the file can be easily pasted into a spreadsheet.
 //
@@ -283,7 +282,7 @@ func WritePersonsAsTXT(filename string, persons []*genetic.Person, nValues int) 
 
 	writer := bufio.NewWriter(outfile)
 	for _, person := range persons {
-		_, err := writer.WriteString(person.Name10)
+		_, err := writer.WriteString(person.Label)
 		for i := 0; i < nValues; i++ {
 			value := strconv.FormatFloat(person.YstrMarkers.Value(i), 'f', -1, 64)
 			_, err = writer.WriteString("\t" + value)
@@ -336,10 +335,11 @@ func WriteMutationRates(filename string, mutationRates genetic.YstrMarkers) erro
 	return nil
 }
 
-// NameToName10 transforms a name to a name that is only 10 characters long
-// and contains only non unicode characters.
+// stringToLabel transforms a string to a label.
+// A label is exactly 10 characters long
+// and contains only 8-bit characters.
 // All spaces are transformed to underscores.
-func nameToName10(name string) string {
+func stringToLabel(name string) string {
 	replacements := map[rune]string{
 		' ': "_",
 		'Ä': "Ae",
