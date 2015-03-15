@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"code.google.com/p/phylofriend/genetic"
-	"code.google.com/p/phylofriend/genfiles"
+	"github.com/yogischogi/phylofriend/genetic"
+	"github.com/yogischogi/phylofriend/genfiles"
 )
 
 func main() {

@@ -14,7 +14,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"code.google.com/p/phylofriend/genetic"
+	"github.com/yogischogi/phylofriend/genetic"
 )
 
 // ReadPersonsFromCSV reads persons' data from a CSV file.
