@@ -349,6 +349,13 @@ func stringToLabel(name string) string {
 		'Ö': "Oe",
 		'ö': "oe",
 		'ß': "ss",
+		'(': "{",
+		')': "}",
+		':': "_",
+		';': "_",
+		',': "_",
+		'[': "{",
+		']': "}",
 	}
 
 	// Transform name to a string that contains only non
