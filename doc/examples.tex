@@ -11,7 +11,14 @@
 \item Start a terminal or command line interpreter and go
 	to the directory where you stored \emph{persons.csv}.
 \item Create a matrix of genetic distances by typing\\
-	\texttt{phylofriend -personsin persons.csv -phylipout infile}
+	\texttt{phylofriend -personsin persons.csv -phylipout infile\\
+	-mrin 67-average.txt}\\
+	Here we use a set of average mutation rates for 67 markers.
+    The file
+	\emph{67-average.txt} can be found in the directory
+	\emph{phylofriend/mutationrates/}.
+    The result is a matrix that contains the number of generations
+    as a measure for genetic distances between the persons.
 \item Use the PHYLIP program to create a tree in Newick format
 	with\\
 	\texttt{/usr/lib/phylip/bin/kitsch}\\
@@ -34,10 +41,6 @@
 	into the Trex window.
 \end{enumerate}
 
-If you do not specify a file containing mutation rates
-Phylofriend will use average 37 marker values as default.
-They can be found in \cite{Kly12}.
-
 
 \subsection{Pimp Your Tree with Nicer Labels}
 
@@ -50,7 +53,7 @@ column contains names. You can create a distance matrix with
 names instead of IDs by typing
 
 \noindent\texttt{phylofriend -personsin persons.csv -labelcol 2\\
--phylipout infile}
+-phylipout infile -mrin 67-average.txt}
 
 Due to compatibility issues with other programs the labels
 must be 10 characters long and may only contain 8-bit
@@ -69,7 +72,8 @@ If you want to publish your tree you will often need to
 protect the privacy of the members. This is what the
 \emph{anonymize} option is for. By typing
 
-\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile -anonymize}
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile -anonymize\\
+-mrin 67-average.txt}
 
 you will get a distance matrix where the names are replaced
 by numbers.
@@ -77,16 +81,19 @@ by numbers.
 
 \subsection{Use a Specific Set of Mutation Rates}
 
-The first example uses Phylofriend's build in mutation rates
-which are average values for the standard 37 marker test.
 Phylofriend supports the use of arbitrary mutation rates by
 the \emph{mrfile} option. The \emph{phylofriend/mutationrates}
 directory contains some files with mutation rates. The average
 mutation rates where taken from \cite{Kly12}.
-If you like to compare on 67 markers you can use
+If you like to compare on 67 markers or 111 markers you can use
 
 \noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
--mrin github.com/yogischogi/phylofriend/mutationrates/67-average.txt}
+-mrin 67-average.txt}
+
+\noindent or
+
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
+-mrin 111-average.txt}
 
 
 \subsection{Calibrate Your Data}
@@ -95,8 +102,8 @@ Mutation rates depend on the method applied to calculate
 genetic distances and the sample populations used. Mutations
 themselves occur by coincidence. Average mutation rates
 often yield acceptable results but in most cases you will
-have to calibrate your data especially if you want to
-calculate in years.
+have to calibrate your data, especially if you want to
+calculate genetic distances in years.
 
 Phylofriend provides two options for data calibration:
 \emph{gentime}, the generation time in years and
@@ -104,39 +111,56 @@ Phylofriend provides two options for data calibration:
 they are just multiplied together but using two separate
 factors seems more convenient for typical use cases.
 
-The default value for the generation time is 25 years.
-For time spans over the last few hundred years a generation
-time of 30 years often yields better results. This can
-be done by
+A generation time of 32 years has proven to show good
+results \cite{YFullMutationRate}. You can use it by typing
 
 \noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
--gentime 30}
+-gentime 32 -mrin 67-average.txt}
 
-It is often difficult to calibrate data because you need a
-reliable paper trail or a well defined historic event. If
-you are lacking both you can try to apply Klyosov's statistical
-method\cite{Kly09}. For large enough sample sizes this will
-effectively reduce the statistical error but you will still
-be left with an unknown systematical one.
+In reality an optimal result is often hard to archieve.
+Especially within the range of genealogical time frames
+(about 400 years) and only small numbers of persons who
+have tested, you are often left with a large statistical error.
+Even worse, the method of Y-STR counting has numerous
+pitfalls, some of which are discussed in \cite{Ham15}.
+
+If you have a reliable paper trail or a well defined
+historic event you can calibrate your data using the
+\emph{cal} option. With \emph{cal} you just provide an
+additional calibration factor that is multiplied to
+the calculated genetic distances, for example
+
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
+-gentime 32 -mrin 67-average.txt -cal 1.2}
+
+multiplies all genetic distances by a factor of 1.2.
+
 
 
 \subsection{Count Mutations}
 
-The \emph{phylofriend/mutationrates} directory contains
-sets of mutation rates where all markers are set to 1.
-This makes mutation counting easy but you will need an
-additional little trick. Internally Phylofriend uses
-average values. So it is possible to compare persons who
-have tested on different sets of markers.
+If you want to count mutational differences between
+persons, for example on a 37 marker scale, you can
+archieve this by typing
 
-If you want to count mutations for example on a 37 marker
-scale, you must multiply Phylofriend's internal results with
-37. The easiest way to archive this is by misusing the
-\emph{gentime} option. 
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout distancecount.txt\\
+-nmarkers 37 -cal 37}
 
-\noindent\texttt{phylofriend -personsin persons.csv\\
--mrin github.com/yogischogi/phylofriend/mutationrates/37-1.txt\\
--phylipout distancecount.txt -gentime 37}
+The \emph{nmarkers} option restricts all calculations
+to the given set of markers (usually 37, 67 or 111). If
+a person has not tested for enough markers, he is excluded
+from the calculation. Because Phylofriend uses average
+values internally, all results are devided by 37 in 
+the previous example. To get whole numbers we must compensate
+for this effect. This is done by multiplying the results
+with 37 using the \emph{cal} option.
+
+The internal use of average values seems complicated at
+first but it allows Phylofriend to compare persons who
+have tested for different numbers of markers.
+
+Phylofriend's results may also differ from other programs
+because Phylo\-friend uses it's own hybrid mutation model.
 
 
 \subsection{Extract Data from a Spreadsheet}
@@ -167,13 +191,13 @@ writes it to the first column of \emph{persons.txt}.
 
 When using the \emph{txtout} option you will need to specify
 how many Y-STR values are written to the text file. This is
-done by \emph{nvalues}. Phylofriend will write the same number
+done by \emph{nmarkers}. Phylofriend will write the same number
 of Y-STR values to each line. Missing values are written as
 0, larger sets of Y-STR values are truncated. This is how to
 write a full set of 111 markers:
 
 \noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt\\
--nvalues 111}
+-nmarkers 111}
 
 
 

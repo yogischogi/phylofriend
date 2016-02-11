@@ -1,0 +1,30 @@
+2016-02-11
+Changes in program behaviour to improve usability:
+
+- Command line parameter "nvalues" changed to "nmarkers".
+  I believe this is easier to understand and to remember.
+
+- Default value for generation time is now 1 instead of 25.
+  This means that the genetic distance is computed in
+  generations instead of years as default.
+  A generation time of 25 years has shown to be a bad
+  choice. 32 years is more appropriate.
+
+- genetic.MutationRates had been replaced by 
+  genetic.DefaultMutationRates(), a function that returns
+  a set of markers where all values are set to 1. This
+  makes mutation counting the default behaviour.
+  The previously used 37 marker mutation rates have not
+  proven to be of great value in practice.
+
+- In the directory "mutationrates" all files containing
+  marker sets of only Ones where deleted. They are now
+  obsolete.
+
+Readability improvements:
+
+- Nmarkers has been changed to MaxMarkers.
+
+- nValues has been changed to nMarkers in function
+  definitions.
+

@@ -209,8 +209,8 @@ func ReadPersonsFromTXT(filename string) ([]*genetic.Person, error) {
 		persons[i] = new(genetic.Person)
 		persons[i].Label = fields[0]
 		nValues := len(fields) - 1
-		if genetic.Nmarkers < nValues {
-			nValues = genetic.Nmarkers
+		if genetic.MaxMarkers < nValues {
+			nValues = genetic.MaxMarkers
 		}
 		for j := 0; j < nValues; j++ {
 			value, err := strconv.ParseFloat(fields[j+1], 64)
@@ -269,10 +269,10 @@ func WriteDistanceMatrix(filename string, persons []*genetic.Person, matrix *gen
 // All entries are separated by tabs so that the content of
 // the file can be easily pasted into a spreadsheet.
 //
-// nValues is the number of Y-STR values that is written. This
+// nMarkers is the number of Y-STR values that is written. This
 // is usefull if not all persons have tested for the same number
 // of markers.
-func WritePersonsAsTXT(filename string, persons []*genetic.Person, nValues int) error {
+func WritePersonsAsTXT(filename string, persons []*genetic.Person, nMarkers int) error {
 	// Open file.
 	outfile, err := os.Create(filename)
 	if err != nil {
@@ -283,7 +283,7 @@ func WritePersonsAsTXT(filename string, persons []*genetic.Person, nValues int) 
 	writer := bufio.NewWriter(outfile)
 	for _, person := range persons {
 		_, err := writer.WriteString(person.Label)
-		for i := 0; i < nValues; i++ {
+		for i := 0; i < nMarkers; i++ {
 			value := strconv.FormatFloat(person.YstrMarkers.Value(i), 'f', -1, 64)
 			_, err = writer.WriteString("\t" + value)
 			if err != nil {

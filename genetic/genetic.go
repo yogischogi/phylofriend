@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	// Nmarkers denotes the number of Y-STR markers available to the program.
-	Nmarkers = 111
+	// MaxMarkers denotes the number of Y-STR markers available to the program.
+	MaxMarkers = 111
 
 	// NDYS464ext denotes the number of extra values for the DYS464 marker.
 	// 98.5% of all people do not have more than four values at the DYS464 marker
@@ -30,8 +30,8 @@ const (
 	// for these palindromic markers.
 	DYS464start    = 21
 	DYS464end      = 24
-	DYS464extStart = Nmarkers
-	DYS464extEnd   = Nmarkers + NDYS464ext - 1
+	DYS464extStart = MaxMarkers
+	DYS464extEnd   = MaxMarkers + NDYS464ext - 1
 	CDYstart       = 33
 	CDYend         = 34
 	DYF395S1start  = 39
@@ -80,16 +80,16 @@ func (p *Person) anonymize() *Person {
 // markerSet returns a person who's marker set has been reduced
 // to the specified number of values.
 // If the person has not been tested for all markers isComplete = false.
-func (p *Person) markerSet(nValues int) (person *Person, isComplete bool) {
+func (p *Person) markerSet(nMarkers int) (person *Person, isComplete bool) {
 	person = new(Person)
 	*person = *p
 	isComplete = true
 	// Delete all marker values outside the specified set.
-	for i := nValues; i < Nmarkers; i++ {
+	for i := nMarkers; i < MaxMarkers; i++ {
 		person.YstrMarkers.SetValue(i, 0)
 	}
 	// Check if the marker set is complete
-	for i := 0; i < nValues; i++ {
+	for i := 0; i < nMarkers; i++ {
 		if person.YstrMarkers.Value(i) == 0 &&
 			(i <= DYS464start || i >= DYS464end) {
 			isComplete = false
@@ -225,7 +225,7 @@ type YstrMarkers struct {
 // addressOf is a helper function for Value and SetValue to
 // allow array like access to the YstrMarkers struct.
 func (m *YstrMarkers) addressOf(i int) *float64 {
-	markers := [Nmarkers + NDYS464ext]*float64{
+	markers := [MaxMarkers + NDYS464ext]*float64{
 		&m.DYS393,
 		&m.DYS390,
 		&m.DYS19,
@@ -364,48 +364,16 @@ func (m *YstrMarkers) slice(a, b int) []float64 {
 	return result
 }
 
-// MutationRates is a set of mutation rates that are
-// used as default values.
-// Here 37 marker average values are used. They can be found in
-// http://www.scirp.org/journal/PaperInformation.aspx?paperID=19567#.U-IUh9a3KR8.
-var MutationRates = YstrMarkers{
-	DYS393:    0.00243,
-	DYS390:    0.00243,
-	DYS19:     0.00243,
-	DYS391:    0.00243,
-	DYS385a:   0.00243,
-	DYS385b:   0.00243,
-	DYS426:    0.00243,
-	DYS388:    0.00243,
-	DYS439:    0.00243,
-	DYS389i:   0.00243,
-	DYS392:    0.00243,
-	DYS389ii:  0.00243,
-	DYS458:    0.00243,
-	DYS459a:   0.00243,
-	DYS459b:   0.00243,
-	DYS455:    0.00243,
-	DYS454:    0.00243,
-	DYS447:    0.00243,
-	DYS437:    0.00243,
-	DYS448:    0.00243,
-	DYS449:    0.00243,
-	DYS464a:   0.00243,
-	DYS464b:   0.00243,
-	DYS464c:   0.00243,
-	DYS464d:   0.00243,
-	DYS460:    0.00243,
-	Y_GATA_H4: 0.00243,
-	YCAIIa:    0.00243,
-	YCAIIb:    0.00243,
-	DYS456:    0.00243,
-	DYS607:    0.00243,
-	DYS576:    0.00243,
-	DYS570:    0.00243,
-	CDYa:      0.00243,
-	CDYb:      0.00243,
-	DYS442:    0.00243,
-	DYS438:    0.00243}
+// DefaultMutationRates() returns a structure of YstrMarkers,
+// where all values are set to 1.
+// This makes mutation counting the default behaviour.
+func DefaultMutationRates() YstrMarkers {
+	var result YstrMarkers
+	for i := 0; i < MaxMarkers+NDYS464ext; i++ {
+		result.SetValue(i, 1)
+	}
+	return result
+}
 
 // distancesMarkerCount counts the difference between every single marker provided.
 // It returns a slice of distances containing the difference for every marker.
@@ -415,8 +383,8 @@ var MutationRates = YstrMarkers{
 // palindromic markers.
 func distancesMarkerCount(ystr1, ystr2 YstrMarkers) (distances []float64, nCompared int) {
 	nCompared = 0
-	distances = make([]float64, Nmarkers)
-	for i := 0; i < Nmarkers; i++ {
+	distances = make([]float64, MaxMarkers)
+	for i := 0; i < MaxMarkers; i++ {
 		if ystr1.Value(i) != 0 && ystr2.Value(i) != 0 {
 			distances[i] = math.Abs(ystr1.Value(i) - ystr2.Value(i))
 			nCompared++
@@ -519,7 +487,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	}
 
 	// Calculate distance for every single marker.
-	distances := make([]float64, Nmarkers)
+	distances := make([]float64, MaxMarkers)
 	// Set nCompared to 0 because we count only the values where
 	// also a mutation rate exists.
 	nCompared := 0
@@ -601,7 +569,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		distances[DYS413end] = distancePalindromic(ystr1.slice(DYS413start, DYS413end+1), ystr2.slice(DYS413start, DYS413end+1)) / mutationRates.Value(DYS413end)
 		nCompared += 2
 	}
-	for i := DYS413end + 1; i < Nmarkers; i++ {
+	for i := DYS413end + 1; i < MaxMarkers; i++ {
 		if ystr1.Value(i) != 0 && ystr2.Value(i) != 0 && mutationRates.Value(i) != 0 {
 			distances[i] = math.Abs(ystr1.Value(i)-ystr2.Value(i)) / mutationRates.Value(i)
 			nCompared++
@@ -695,7 +663,7 @@ func ModalHaplotype(persons []*Person) *Person {
 		Origin:   "modal",
 	}
 	// Calculate modal value for each marker.
-	for marker := 0; marker < Nmarkers; marker++ {
+	for marker := 0; marker < MaxMarkers; marker++ {
 		// cMarkers maps marker values to the count of that value.
 		cMarkers := make(map[float64]int)
 		// Count marker values.
@@ -705,6 +673,7 @@ func ModalHaplotype(persons []*Person) *Person {
 				cMarkers[markerValue] += 1
 			}
 		}
+
 		// Find modal value.
 		max := 0
 		modalValue := 0.0
@@ -831,10 +800,10 @@ func Reduce(persons []*Person, factor int) ([]*Person, error) {
 // persons who have tested at least for the specified number of markers.
 // Additional markers are set to 0.
 // If the result contains less than two persons this function returns an error.
-func ReduceToMarkerSet(persons []*Person, nValues int) ([]*Person, error) {
+func ReduceToMarkerSet(persons []*Person, nMarkers int) ([]*Person, error) {
 	result := make([]*Person, 0, len(persons))
 	for _, p := range persons {
-		next, isComplete := p.markerSet(nValues)
+		next, isComplete := p.markerSet(nMarkers)
 		if isComplete == true {
 			result = append(result, next)
 		}
