@@ -128,7 +128,7 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 				if err != nil {
 					return markers, err
 				}
-				markers.SetValue(genetic.DYS464extStart+i-4, value)
+				markers[genetic.DYS464extStart+i-4] = value
 			}
 		} else if len(values) < 4 {
 			complete := make([]string, 4)
@@ -153,7 +153,7 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 		if err != nil {
 			return markers, err
 		}
-		markers.SetValue(i, value)
+		markers[i] = value
 	}
 	return markers, nil
 }
@@ -217,7 +217,7 @@ func ReadPersonsFromTXT(filename string) ([]*genetic.Person, error) {
 			if err != nil {
 				return persons, err
 			}
-			persons[i].YstrMarkers.SetValue(j, value)
+			persons[i].YstrMarkers[j] = value
 		}
 	}
 	return persons, err
@@ -284,7 +284,7 @@ func WritePersonsAsTXT(filename string, persons []*genetic.Person, nMarkers int)
 	for _, person := range persons {
 		_, err := writer.WriteString(person.Label)
 		for i := 0; i < nMarkers; i++ {
-			value := strconv.FormatFloat(person.YstrMarkers.Value(i), 'f', -1, 64)
+			value := strconv.FormatFloat(person.YstrMarkers[i], 'f', -1, 64)
 			_, err = writer.WriteString("\t" + value)
 			if err != nil {
 				return err
@@ -302,33 +302,58 @@ func WritePersonsAsTXT(filename string, persons []*genetic.Person, nMarkers int)
 // ReadMutationRates reads mutation rates from a file.
 // The mutation rates must be provided in JSON format.
 func ReadMutationRates(filename string) (genetic.YstrMarkers, error) {
-	var mutationRates genetic.YstrMarkers
+	var result genetic.YstrMarkers
+	// Map marker names to indices.
+	var names = make(map[string]int)
+	for i, _ := range genetic.YstrMarkerTable {
+		names[genetic.YstrMarkerTable[i].InternalName] = i
+	}
+	// Open file.
 	infile, err := os.Open(filename)
 	if err != nil {
-		return mutationRates, err
+		return result, err
 	}
 	defer infile.Close()
-
+	// Read JSON from file.
+	var untypedJSON interface{}
 	decoder := json.NewDecoder(infile)
-	err = decoder.Decode(&mutationRates)
+	err = decoder.Decode(&untypedJSON)
 	if err != nil {
-		return mutationRates, err
+		return result, err
 	}
-	return mutationRates, nil
+	// Use type assertions to get typed data.
+	JSON := untypedJSON.(map[string]interface{})
+	for key, value := range JSON {
+		var markerValue float64
+		switch v := value.(type) {
+		case int:
+			markerValue = float64(v)
+		case float64:
+			markerValue = v
+		default:
+			fmt.Printf("ReadMutationRates, unknown value: %v.\n", v)
+		}
+		// Fill result with values.
+		result[names[key]] = markerValue
+	}
+	return result, nil
 }
 
 // WriteMutationRates writes mutation rates to file in JSON format.
 func WriteMutationRates(filename string, mutationRates genetic.YstrMarkers) error {
 	// Create Json
-	buffer := new(bytes.Buffer)
-	encoder := json.NewEncoder(buffer)
-	encoder.Encode(mutationRates)
-
-	// Convert every entry to a single line for better readabilty.
-	outString := strings.Replace(buffer.String(), ",", ",\n", -1)
+	var buffer bytes.Buffer
+	buffer.WriteString("{")
+	n := len(genetic.YstrMarkerTable)
+	for i := 0; i < n-1; i++ {
+		text := fmt.Sprintf("%q:%G,\n", genetic.YstrMarkerTable[i].InternalName, mutationRates[i])
+		buffer.WriteString(text)
+	}
+	text := fmt.Sprintf("%q:%G}", genetic.YstrMarkerTable[n-1].InternalName, mutationRates[n-1])
+	buffer.WriteString(text)
 
 	// Write to file.
-	err := ioutil.WriteFile(filename, []byte(outString), os.ModePerm)
+	err := ioutil.WriteFile(filename, []byte(buffer.String()), os.ModePerm)
 	if err != nil {
 		return err
 	}

@@ -7,19 +7,19 @@ package genetic
 type YstrMarkerTranslation struct {
 	// Index is the index of this marker inside Phylofriend.
 	Index int
-	// PhylofriendName is the name that is used by Phylofriend.
-	PhylofriendName string
+	// InternalName is the name that is used by this program.
+	InternalName string
 	// FTDNAName is the name that is used by Family Tree DNA.
 	FTDNAName string
 	//  YFullName is the name that is used by YFull.
 	YFullName string
 }
 
-// YstrMarkerTranslationTable contains the Phylofriend index
+// YstrMarkerTable contains the Phylofriend index
 // and the names for specific markers that are used by Phylofriend,
 // FamilyTreeDNA and YFull.
 //
-// Format: index, Phylofriend name, FTDNA name, YFull name.
+// Format: index, Internal name, FTDNA name, YFull name.
 //
 // The first 111 entries contain Y-STR markers in Family Tree DNA
 // order (used for 12, 37, 67, 111 marker tests, 2016-02-14).
@@ -42,7 +42,7 @@ type YstrMarkerTranslation struct {
 //
 // DYF406S1	at Family Tree DNA seems to be identical to DYF406 at YFull,
 // and DYF395S1 to DYF395, but I am not totally sure.
-var YstrMarkerTranslationTable []YstrMarkerTranslation = []YstrMarkerTranslation{
+var YstrMarkerTable []YstrMarkerTranslation = []YstrMarkerTranslation{
 	{0, "DYS393", "DYS393", "DYS393"},
 	{1, "DYS390", "DYS390", "DYS390"},
 	{2, "DYS19", "DYS19", "DYS19"},
