@@ -1,3 +1,5 @@
+2016-02-18
+- Bug fix: genetic.Distance
 
 2016-02-17
 - genetic: All calculations on Y-STR markers are now

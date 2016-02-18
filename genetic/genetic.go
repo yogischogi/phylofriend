@@ -204,7 +204,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	var infinite = func(marker1, marker2, mutationRate float64) (distance float64) {
 		if marker1 != 0 && marker2 != 0 && mutationRate != 0 {
 			if marker1 != marker2 {
-				distance = 1
+				distance = 1 / mutationRate
 			} else {
 				distance = 0
 			}
@@ -293,18 +293,19 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	if DYS464exists && mutationRates[DYS464end] != 0 {
 		// For compatibilty reasons DYS464 is stored at different range positions.
 		// So we need to put all values back together.
-		values1 := append(ystr1[DYS464start:DYS464end+1], ystr1[DYS464extStart:DYS464extEnd+1]...)
-		values2 := append(ystr2[DYS464start:DYS464end+1], ystr2[DYS464extStart:DYS464extEnd+1]...)
+		values1 := concat(ystr1[DYS464start:DYS464end+1], ystr1[DYS464extStart:DYS464extEnd+1])
+		values2 := concat(ystr2[DYS464start:DYS464end+1], ystr2[DYS464extStart:DYS464extEnd+1])
 		distances[DYS464end] = distancePalindromic(values1, values2) / mutationRates[DYS464end]
 		nCompared += 4
 	}
 	for i := DYS464end + 1; i < YCAIIa; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if YCAIIexists && mutationRates[YCAIIa] != 0 {
+	if YCAIIexists {
+		// TODO: Better use palindromic?
+		// See: http://www.dna-fingerprint.com/static/PalindromicPres.pdf
+		// Currently YCAIIexists is redundant.
 		distances[YCAIIa] = infinite(ystr1[YCAIIa], ystr2[YCAIIa], mutationRates[YCAIIa])
-	}
-	if YCAIIexists && mutationRates[YCAIIb] != 0 {
 		distances[YCAIIb] = infinite(ystr1[YCAIIb], ystr2[YCAIIb], mutationRates[YCAIIb])
 	}
 	for i := YCAIIb + 1; i < CDYstart; i++ {
@@ -393,6 +394,15 @@ func distancePalindromic(ystr1, ystr2 []float64) float64 {
 		}
 	}
 	return distance
+}
+
+// concat concatenates to slices and returns the result
+// without any changes to the underlying arrays of s1 and s2.
+func concat(s1, s2 []float64) []float64 {
+	result := make([]float64, len(s1)+len(s2))
+	copy(result, s1)
+	copy(result[len(s1):], s2)
+	return result
 }
 
 // ModalHaplotype calculates the modal haplotype for a group of persons.
