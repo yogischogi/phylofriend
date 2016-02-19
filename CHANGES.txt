@@ -1,3 +1,11 @@
+2016-02-19
+- Code clean up for genetic.Distance.
+  The genetic distance calculation is still only valid for
+  up to 111 markers, although the program uses 500 markers
+  for comparison.
+- Files containing mutation rates: Zero values were deleted
+  for better clarity.
+
 2016-02-18
 - Bug fix: genetic.Distance
 

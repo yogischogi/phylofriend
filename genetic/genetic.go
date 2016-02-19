@@ -95,6 +95,10 @@ func (p *Person) markerSet(nMarkers int) (person *Person, isComplete bool) {
 	// Check if the marker set is complete
 	for i := 0; i < nMarkers; i++ {
 		if person.YstrMarkers[i] == 0 &&
+			// The palindromic marker DYS464 is not counted here.
+			// In all cases I know, at least four values are reported
+			// for DYS464, but in theory there could be less. So I
+			// ignore this marker here, just in case.
 			(i <= DYS464start || i >= DYS464end) {
 			isComplete = false
 			break
@@ -215,60 +219,18 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 
 	// Check if values for special markers exist.
 	DYS389exists := false
-	DYS464exists := false
-	YCAIIexists := false
-	CDYexists := false
-	DYF395S1exists := false
-	DYS413exists := false
-
 	if ystr1[DYS389i] != 0 &&
 		ystr2[DYS389i] != 0 &&
 		ystr1[DYS389ii] != 0 &&
 		ystr2[DYS389ii] != 0 {
 		DYS389exists = true
 	}
-
-	// Make sure that at least one value is reported for DYS464.
-	DYS464firstExists := false
-	DYS464secondExists := false
-	for i := DYS464start; i <= DYS464end; i++ {
-		if ystr1[i] != 0 {
-			DYS464firstExists = true
-		}
-		if ystr2[i] != 0 {
-			DYS464secondExists = true
-		}
-		if DYS464firstExists && DYS464secondExists {
-			DYS464exists = true
-			break
-		}
-	}
-
-	if ystr1[DYS464start] != 0 &&
-		ystr2[DYS464start] != 0 {
-		DYS464exists = true
-	}
-
+	YCAIIexists := false
 	if ystr1[YCAIIa] != 0 &&
 		ystr2[YCAIIa] != 0 &&
 		ystr1[YCAIIb] != 0 &&
 		ystr2[YCAIIb] != 0 {
 		YCAIIexists = true
-	}
-
-	if ystr1[CDYstart] != 0 &&
-		ystr2[CDYstart] != 0 {
-		CDYexists = true
-	}
-
-	if ystr1[DYF395S1start] != 0 &&
-		ystr2[DYF395S1start] != 0 {
-		DYF395S1exists = true
-	}
-
-	if ystr1[DYS413start] != 0 &&
-		ystr2[DYS413start] != 0 {
-		DYS413exists = true
 	}
 
 	// Calculate distance for every single marker.
@@ -290,12 +252,12 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	for i := DYS389ii + 1; i < DYS464start; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if DYS464exists && mutationRates[DYS464end] != 0 {
-		// For compatibilty reasons DYS464 is stored at different range positions.
-		// So we need to put all values back together.
-		values1 := concat(ystr1[DYS464start:DYS464end+1], ystr1[DYS464extStart:DYS464extEnd+1])
-		values2 := concat(ystr2[DYS464start:DYS464end+1], ystr2[DYS464extStart:DYS464extEnd+1])
-		distances[DYS464end] = distancePalindromic(values1, values2) / mutationRates[DYS464end]
+	// DYS464: For compatibilty reasons DYS464 is stored at different range positions.
+	// So we need to put all values back together.
+	values1 := concat(ystr1[DYS464start:DYS464end+1], ystr1[DYS464extStart:DYS464extEnd+1])
+	values2 := concat(ystr2[DYS464start:DYS464end+1], ystr2[DYS464extStart:DYS464extEnd+1])
+	if isValidPalindromic(values1, values2, mutationRates[DYS464end]) {
+		distances[DYS464end] = distancePalindromic(values1, values2, mutationRates[DYS464end])
 		nCompared += 4
 	}
 	for i := DYS464end + 1; i < YCAIIa; i++ {
@@ -311,22 +273,22 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	for i := YCAIIb + 1; i < CDYstart; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if CDYexists && mutationRates[CDYend] != 0 {
-		distances[CDYend] = distancePalindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1]) / mutationRates[CDYend]
+	if isValidPalindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend]) {
+		distances[CDYend] = distancePalindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend])
 		nCompared += 2
 	}
 	for i := CDYend + 1; i < DYF395S1start; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if DYF395S1exists && mutationRates[DYF395S1end] != 0 {
-		distances[DYF395S1end] = distancePalindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1]) / mutationRates[DYF395S1end]
+	if isValidPalindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1], mutationRates[DYF395S1end]) {
+		distances[DYF395S1end] = distancePalindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1], mutationRates[DYF395S1end])
 		nCompared += 2
 	}
 	for i := DYF395S1end + 1; i < DYS413start; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if DYS413exists && mutationRates[DYS413end] != 0 {
-		distances[DYS413end] = distancePalindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1]) / mutationRates[DYS413end]
+	if isValidPalindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1], mutationRates[DYS413end]) {
+		distances[DYS413end] = distancePalindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1], mutationRates[DYS413end])
 		nCompared += 2
 	}
 	for i := DYS413end + 1; i < MaxMarkers; i++ {
@@ -353,7 +315,10 @@ func distanceDYS389ii(aDYS389i, aDYS389ii, bDYS389i, bDYS389ii float64) float64 
 // (http://www.genebase.com/learning/article/46).
 //
 // ystr1 and ystr2 contain the palindromic values for each person.
-func distancePalindromic(ystr1, ystr2 []float64) float64 {
+func distancePalindromic(ystr1, ystr2 []float64, mutationRate float64) float64 {
+	if mutationRate == 0 {
+		return 0
+	}
 	var distance float64 = 0
 
 	// Create two lists that contain only values > 0.
@@ -393,7 +358,32 @@ func distancePalindromic(ystr1, ystr2 []float64) float64 {
 			distance++
 		}
 	}
-	return distance
+	return distance / mutationRate
+}
+
+// isValidPalindromic tests if the palindromic marker specified
+// for two samples ystr1 and ystr2 is valid for further processing.
+// The marker is considered valid if both ystr1 and ystr2 contain
+// at least one value > 0 and the mutation rate is also > 0.
+func isValidPalindromic(ystr1, ystr2 []float64, mutationRate float64) bool {
+	if mutationRate == 0 {
+		return false
+	}
+	isValid1 := false
+	for _, value := range ystr1 {
+		if value > 0 {
+			isValid1 = true
+			break
+		}
+	}
+	isValid2 := false
+	for _, value := range ystr2 {
+		if value > 0 {
+			isValid2 = true
+			break
+		}
+	}
+	return isValid1 && isValid2
 }
 
 // concat concatenates to slices and returns the result
