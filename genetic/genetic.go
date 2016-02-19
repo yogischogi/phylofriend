@@ -235,14 +235,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 
 	// Calculate distance for every single marker.
 	distances := make([]float64, MaxMarkers)
-	for i := 0; i < DYS389i; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
-	}
-	if DYS389exists && mutationRates[DYS389i] != 0 {
-		distances[DYS389i] = math.Abs(ystr1[DYS389i]-ystr2[DYS389i]) / mutationRates[DYS389i]
-		nCompared++
-	}
-	for i := DYS389i + 1; i < DYS389ii; i++ {
+	for i := 0; i < DYS389ii; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	if DYS389exists && mutationRates[DYS389ii] != 0 {
@@ -299,7 +292,6 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 
 // distanceDYS389ii calculates the genetic distance for the DYS389ii
 // marker. This marker is a special case because it includes DYS389i
-// (http://www.genebase.com/learning/article/46).
 //
 // The input parameters are the DYS389 values for persons a and b.
 func distanceDYS389ii(aDYS389i, aDYS389ii, bDYS389i, bDYS389ii float64) float64 {
