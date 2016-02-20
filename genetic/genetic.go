@@ -48,6 +48,10 @@ const (
 	YCAIIb = 28
 )
 
+// yFullToIndex maps YFull marker names to the index that
+// is used inside this program.
+var yFullToIndex map[string]int
+
 // DistanceFunc is a function to calculate the genetic distance
 // between two sets of Y-STR markers.
 // The first two parameters are the Y-STR markers of the persons
@@ -566,4 +570,18 @@ func Average(values []float64) (m, s float64, err error) {
 	}
 	s = math.Sqrt(d / (N - 1))
 	return m, s, err
+}
+
+// YFullToIndex maps a YFull marker name to the index that is
+// used inside this program.
+func YFullToIndex(markerName string) (index int, exists bool) {
+	if yFullToIndex == nil {
+		// Create map that maps YFull marker names to indices.
+		yFullToIndex = make(map[string]int)
+		for _, marker := range YstrMarkerTable {
+			yFullToIndex[marker.YFullName] = marker.Index
+		}
+	}
+	index, exists = yFullToIndex[markerName]
+	return index, exists
 }

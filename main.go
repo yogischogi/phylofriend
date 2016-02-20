@@ -58,9 +58,16 @@ func main() {
 
 	// Read persons from file or exit if no file is provided.
 	if *personsin != "" {
-		if strings.HasSuffix(strings.ToLower(*personsin), ".csv") {
+		fileInfo, err := os.Stat(*personsin)
+		switch {
+		case err != nil:
+			fmt.Printf("Error, something is wrong with personsin, %v.\n", err)
+			os.Exit(1)
+		case fileInfo.IsDir():
+			persons, err = genfiles.ReadPersonsFromDir(*personsin)
+		case strings.HasSuffix(strings.ToLower(*personsin), ".csv"):
 			persons, err = genfiles.ReadPersonsFromCSV(*personsin, *labelcol-1)
-		} else {
+		default:
 			persons, err = genfiles.ReadPersonsFromTXT(*personsin)
 		}
 		if err != nil {

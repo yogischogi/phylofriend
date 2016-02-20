@@ -1,3 +1,8 @@
+2016-02-20
+- Command line parameter personsin now excepts a directory
+  containing files in YFull format.
+  This code is untested.
+
 2016-02-19
 - genetic.Distance: Removed special handling for DYS389i.
 - Code clean up for genetic.Distance.

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -221,6 +222,115 @@ func ReadPersonsFromTXT(filename string) ([]*genetic.Person, error) {
 		}
 	}
 	return persons, err
+}
+
+// ReadPersonsFromDir reads persons from the specified directory.
+// All files including data must have the extension ".csv" and be
+// in YFull Y-STR data format.
+func ReadPersonsFromDir(dirName string) ([]*genetic.Person, error) {
+	result := make([]*genetic.Person, 0, 100)
+	// Get list of input files.
+	infiles, err := namesWithExt(dirName, ".csv")
+	if err != nil {
+		return result, errors.New(fmt.Sprintf("could not read files from directory, %s\n", err))
+	}
+	// Read Y-STR data from input files.
+	for _, infile := range infiles {
+		person, err := ReadPersonFromYFull(filepath.Join(dirName, infile))
+		if err != nil {
+			fmt.Printf("Could not read person from file %s\n", err)
+		}
+		result = append(result, person)
+	}
+	return result, nil
+}
+
+// ReadPersonFromYFull reads a person from a YFull Y-STR results file.
+// The Y-Full ID is extracted from the file name and used as the persons's ID.
+func ReadPersonFromYFull(filename string) (*genetic.Person, error) {
+	infile, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer infile.Close()
+
+	// Read all CSV records from file.
+	csvReader := csv.NewReader(infile)
+	csvReader.Comma = ';'
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+	// Extract Y-STR marker values.
+	var result genetic.Person
+	for _, record := range records {
+		markerName := record[0]
+		markerValue := record[1]
+		if markerValue != "n/a" {
+			value, err := strconv.ParseFloat(markerValue, 64)
+			if err != nil {
+				// This may happen. So just print out a notice.
+				fmt.Printf("Error reading YFull marker value in file %s, %s.\n", filename, err)
+			} else {
+				index, exists := genetic.YFullToIndex(markerName)
+				if exists {
+					result.YstrMarkers[index] = value
+				} else {
+					fmt.Printf("Unknown marker %s found in file %s.\n", markerName, filename)
+				}
+			}
+		}
+	}
+	// Extract ID and name from filename.
+	result.ID = idFromFileName(filepath.Base(filename))
+	result.Name = filepath.Base(filename)
+	result.Label = stringToLabel(result.ID)
+	return &result, nil
+}
+
+// idFromFileName converts the filename of an YFull Y-STR results
+// file into the ID of a person.
+// A typical filename looks like this: STR_for_YF01234_20160216.csv.
+// If the filename is not in the standard format idFromFileName
+// tries to extract something useful by stripping the ".csv".
+// If this fails the filename itself is returned.
+func idFromFileName(filename string) string {
+	var result string
+	switch {
+	case strings.HasPrefix(filename, "STR_for_"):
+		end := filename[8:]
+		parts := strings.Split(end, "_")
+		result = parts[0]
+	case strings.HasSuffix(filename, ".csv"):
+		result = filename[0 : len(filename)-4]
+	default:
+		result = filename
+	}
+	return result
+}
+
+// namesWithExt returns the names of all files in a directory
+// ending with the extension ext.
+// If there are no matching files in the directory
+// an empty slice is returned.
+func namesWithExt(dirName string, ext string) (filenames []string, err error) {
+	filenames = make([]string, 0, 100)
+	dir, err := os.Open(dirName)
+	if err != nil {
+		return filenames, errors.New(fmt.Sprintf("could not open directory, %s\n", err))
+	}
+	defer dir.Close()
+
+	files, err := dir.Readdirnames(0)
+	if err != nil {
+		return files, errors.New(fmt.Sprintf("could not read files from directory, %s\n", err))
+	}
+	for _, filename := range files {
+		if filepath.Ext(filename) == ext {
+			filenames = append(filenames, filename)
+		}
+	}
+	return filenames, err
 }
 
 // WriteDistanceMatrix writes a distance matrix in PHYLIP compatible format.
