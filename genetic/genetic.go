@@ -13,7 +13,7 @@ const (
 	// MaxMarkers denotes the number of Y-STR markers available to the program.
 	// The array that contains the markers holds additional values for
 	// DYS464. So the actual array size is MaxMarkers + NDYS464ext.
-	MaxMarkers = 496
+	MaxMarkers = 499
 
 	// NDYS464ext denotes the number of extra values for the DYS464 marker.
 	// 98.5% of all people do not have more than four values at the DYS464 marker

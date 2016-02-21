@@ -238,9 +238,13 @@ func ReadPersonsFromDir(dirName string) ([]*genetic.Person, error) {
 	for _, infile := range infiles {
 		person, err := ReadPersonFromYFull(filepath.Join(dirName, infile))
 		if err != nil {
-			fmt.Printf("Could not read person from file %s\n", err)
+			// We do not return an error here because a
+			// single invalid file should not terminate the
+			// whole program.
+			fmt.Printf("Error! Could not read person from file %s, %s\n", infile, err)
+		} else {
+			result = append(result, person)
 		}
-		result = append(result, person)
 	}
 	return result, nil
 }
@@ -258,15 +262,28 @@ func ReadPersonFromYFull(filename string) (*genetic.Person, error) {
 	csvReader := csv.NewReader(infile)
 	csvReader.Comma = ';'
 	records, err := csvReader.ReadAll()
-	if err != nil {
+	switch {
+	case err != nil:
 		return nil, err
+	case len(records) == 0:
+		return nil, errors.New(fmt.Sprintf("no data found in %s", infile))
+	case len(records[0]) < 2:
+		return nil, errors.New(fmt.Sprintf("invalid file format for %s", infile))
 	}
+
 	// Extract Y-STR marker values.
 	var result genetic.Person
+	var count = 0
 	for _, record := range records {
 		markerName := record[0]
 		markerValue := record[1]
 		if markerValue != "n/a" {
+			if strings.HasSuffix(markerValue, ".a") ||
+				strings.HasSuffix(markerValue, ".g") ||
+				strings.HasSuffix(markerValue, ".c") ||
+				strings.HasSuffix(markerValue, ".t") {
+				markerValue = markerValue[:len(markerValue)-2]
+			}
 			value, err := strconv.ParseFloat(markerValue, 64)
 			if err != nil {
 				// This may happen. So just print out a notice.
@@ -275,6 +292,7 @@ func ReadPersonFromYFull(filename string) (*genetic.Person, error) {
 				index, exists := genetic.YFullToIndex(markerName)
 				if exists {
 					result.YstrMarkers[index] = value
+					count++
 				} else {
 					fmt.Printf("Unknown marker %s found in file %s.\n", markerName, filename)
 				}
@@ -285,6 +303,7 @@ func ReadPersonFromYFull(filename string) (*genetic.Person, error) {
 	result.ID = idFromFileName(filepath.Base(filename))
 	result.Name = filepath.Base(filename)
 	result.Label = stringToLabel(result.ID)
+	fmt.Printf("Number of markers for %s: %d\n", result.ID, count)
 	return &result, nil
 }
 

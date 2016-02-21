@@ -1,3 +1,7 @@
+2016-02-21
+- YFull input refined and tested.
+- Fixed YstrMarkerTable and added new markers.
+
 2016-02-20
 - Command line parameter personsin now excepts a directory
   containing files in YFull format.
