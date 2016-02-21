@@ -13,7 +13,7 @@ const (
 	// MaxMarkers denotes the number of Y-STR markers available to the program.
 	// The array that contains the markers holds additional values for
 	// DYS464. So the actual array size is MaxMarkers + NDYS464ext.
-	MaxMarkers = 499
+	MaxMarkers = 500
 
 	// NDYS464ext denotes the number of extra values for the DYS464 marker.
 	// 98.5% of all people do not have more than four values at the DYS464 marker
@@ -42,10 +42,8 @@ const (
 	DYF395S1end    = 40
 	DYS413start    = 48
 	DYS413end      = 49
-
-	// For YCAII the infinite allele mutation model is used.
-	YCAIIa = 27
-	YCAIIb = 28
+	YCAIIstart     = 27
+	YCAIIend       = 28
 )
 
 // yFullToIndex maps YFull marker names to the index that
@@ -206,7 +204,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		return distance
 	}
 
-	// infinite calculates the genetic distance for one marker of
+	/* // infinite calculates the genetic distance for one marker of
 	// two persons using the infinite allelles mutation model
 	// (http://nitro.biosci.arizona.edu/ftDNA/models.html).
 	var infinite = func(marker1, marker2, mutationRate float64) (distance float64) {
@@ -219,7 +217,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 			nCompared++
 		}
 		return distance
-	}
+	} */
 
 	// Check if values for special markers exist.
 	DYS389exists := false
@@ -228,13 +226,6 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		ystr1[DYS389ii] != 0 &&
 		ystr2[DYS389ii] != 0 {
 		DYS389exists = true
-	}
-	YCAIIexists := false
-	if ystr1[YCAIIa] != 0 &&
-		ystr2[YCAIIa] != 0 &&
-		ystr1[YCAIIb] != 0 &&
-		ystr2[YCAIIb] != 0 {
-		YCAIIexists = true
 	}
 
 	// Calculate distance for every single marker.
@@ -255,19 +246,17 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	values2 := concat(ystr2[DYS464start:DYS464end+1], ystr2[DYS464extStart:DYS464extEnd+1])
 	if isValidPalindromic(values1, values2, mutationRates[DYS464end]) {
 		distances[DYS464end] = distancePalindromic(values1, values2, mutationRates[DYS464end])
-		nCompared += 4
+		// The extremely rare cases of more than 4 DYS464 markers are ignored for counting.
+		nCompared += DYS464end - DYS464start + 1
 	}
-	for i := DYS464end + 1; i < YCAIIa; i++ {
+	for i := DYS464end + 1; i < YCAIIstart; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if YCAIIexists {
-		// TODO: Better use palindromic?
-		// See: http://www.dna-fingerprint.com/static/PalindromicPres.pdf
-		// Currently YCAIIexists is redundant.
-		distances[YCAIIa] = infinite(ystr1[YCAIIa], ystr2[YCAIIa], mutationRates[YCAIIa])
-		distances[YCAIIb] = infinite(ystr1[YCAIIb], ystr2[YCAIIb], mutationRates[YCAIIb])
+	if isValidPalindromic(ystr1[YCAIIstart:YCAIIend+1], ystr2[YCAIIstart:YCAIIend+1], mutationRates[YCAIIend]) {
+		distances[YCAIIend] = distancePalindromic(ystr1[YCAIIstart:YCAIIend+1], ystr2[YCAIIstart:YCAIIend+1], mutationRates[YCAIIend])
+		nCompared += YCAIIend - YCAIIstart + 1
 	}
-	for i := YCAIIb + 1; i < CDYstart; i++ {
+	for i := YCAIIend + 1; i < CDYstart; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	if isValidPalindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend]) {

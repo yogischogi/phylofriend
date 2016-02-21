@@ -1,4 +1,6 @@
 2016-02-21
+- New order in YstrMarkerTable.
+- YCAII now handled as palindromic.
 - YFull input refined and tested.
 - Fixed YstrMarkerTable and added new markers.
 
