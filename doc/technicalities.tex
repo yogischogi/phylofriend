@@ -53,15 +53,23 @@ files with predefined mutation rates.
 \item 37-average.txt
 \item 67-average.txt
 \item 111-average.txt
+\item 390-average.txt (experimental)
+\item 500-average.txt (experimental)
 \end{itemize}
 
 In these files average mutation rates are used for the
-corresponding set of markers. The mutation rates were taken
-from \cite{Kly12}. The distance matrix contains years but
-these years should not be interpreted as TMRCA (Time to Most
-Recent Common Ancestor). It is more like a \emph{How long
-do I have to wait on average before such a genetic distance
-occurs?}
+corresponding set of markers. The mutation rates for 12,
+37, 67 and 111 markers were taken from \cite{Kly12}.
+
+The mutation rates for 390 and 500 markers are experimental.
+They were derived by comparing YFull data of the
+\href{http://yfull.com/groups/list/}{R1b-M343 (xP312 xU106) project}
+to Family Tree DNA data from members of the
+\href{https://www.familytreedna.com/groups/ht-3-5new/about/background}{R1b-M269 (P312- U106-) project}.
+500-average.txt uses all known Y-STR markers that are
+reported by YFull and Family Tree DNA. 390-average.txt leaves
+out most of the palindromic markers. This marker set should
+suffer less from saturation effects.
 
 These mutation rates are useful for genealogical purposes.
 During genealogical time frames (about 400 years) long time
@@ -140,6 +148,36 @@ reasons the first column is exactly 10 characters long and
 contains only non Unicode characters. Spaces are transformed into
 underscores. The following columns contain Y-STR values
 separated by tabs.
+
+
+\subsection{YFull Format}
+
+YFull files have a name like \emph{STR\_for\_YF01234\_20160222.csv}.
+Each line of the file contains the result for a single marker and
+sometimes additional information. Example:
+
+\begin{verbatim}
+DYS390;24;
+DYS391;11;
+DYS392;14;?
+DYS393;13;
+\end{verbatim}
+
+Although the file is in CSV format, semicolons are used instead
+of commas as separators. This may cause trouble if you try to
+add additional results by hand. Phylofriend does not care if a
+marker is provided multiple times. The last occurrence of a name
+is considered the valid one. Thus you can add results from other
+testing companies just by adding them to the end of the file.
+
+Phylofriend tries to extract a person's ID from the filename. If
+a file is named \emph{STR\_for\_YF01234\_20160222.csv}, the ID
+will be \emph{YF01234}.
+
+If you want to provide your own files, you do not need to stick
+to the YFull naming convention. Just use the desired ID as a
+filename like \emph{ID1234.csv}, but the file must end in 
+\emph{.csv}.
 
 
 \subsection{PHYLIP Format}

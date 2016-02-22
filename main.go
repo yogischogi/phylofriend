@@ -14,7 +14,7 @@ import (
 func main() {
 	// Command line flags.
 	var (
-		personsin = flag.String("personsin", "", "Input filename (.txt or .csv).")
+		personsin = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
 		labelcol  = flag.Int("labelcol", 1, "Column number for labels in CSV file.")
 		mrin      = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		phylipout = flag.String("phylipout", "", "Output filename for PHYLIP distance matrix.")

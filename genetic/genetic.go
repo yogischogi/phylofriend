@@ -30,7 +30,7 @@ const (
 	DYS389i  = 9
 	DYS389ii = 11
 
-	// The program uses the infinite allele mutation model
+	// The program uses the infinite alleles mutation model
 	// for these palindromic markers.
 	DYS464start    = 21
 	DYS464end      = 24
@@ -44,7 +44,157 @@ const (
 	DYS413end      = 49
 	YCAIIstart     = 27
 	YCAIIend       = 28
+	// Palindromic markers reported by YFull.
+	DYS526start = 390
+	DYS526end   = 391
+	DYS527start = 392
+	DYS527end   = 393
+	DYS528start = 394
+	DYS528end   = 395
+	DYS725start = 396
+	DYS725end   = 399
+	DYF371start = 400
+	DYF371end   = 403
+	DYF380start = 404
+	DYF380end   = 405
+	DYF381start = 406
+	DYF381end   = 407
+	DYF383start = 408
+	DYF383end   = 409
+	DYF384start = 410
+	DYF384end   = 411
+	DYF385start = 412
+	DYF385end   = 413
+	DYF386start = 414
+	DYF386end   = 417
+	DYF387start = 418
+	DYF387end   = 419
+	DYF390start = 420
+	DYF390end   = 421
+	DYF391start = 422
+	DYF391end   = 423
+	DYF396start = 424
+	DYF396end   = 425
+	DYF398start = 426
+	DYF398end   = 427
+	DYF399start = 428
+	DYF399end   = 430
+	DYF400start = 431
+	DYF400end   = 432
+	DYF401start = 433
+	DYF401end   = 434
+	DYF403start = 435
+	DYF403end   = 436
+	DYF404start = 437
+	DYF404end   = 438
+	DYF405start = 439
+	DYF405end   = 440
+	DYF407start = 441
+	DYF407end   = 442
+	DYF408start = 443
+	DYF408end   = 444
+	DYF409start = 445
+	DYF409end   = 446
+	DYF410start = 447
+	DYF410end   = 448
+	DYF411start = 449
+	DYF411end   = 450
+	DYF412start = 451
+	DYF412end   = 452
+	DYR9start   = 453
+	DYR9end     = 454
+	DYR17start  = 455
+	DYR17end    = 457
+	DYR18start  = 458
+	DYR18end    = 459
+	DYR35start  = 460
+	DYR35end    = 461
+	DYR36start  = 462
+	DYR36end    = 463
+	DYR38start  = 464
+	DYR38end    = 465
+	DYR45start  = 466
+	DYR45end    = 468
+	DYR58start  = 469
+	DYR58end    = 470
+	DYR63start  = 471
+	DYR63end    = 472
+	DYR64start  = 473
+	DYR64end    = 474
+	DYR66start  = 475
+	DYR66end    = 476
+	DYR67start  = 477
+	DYR67end    = 480
+	DYR68start  = 481
+	DYR68end    = 484
+	DYR88start  = 485
+	DYR88end    = 486
+	DYR121start = 487
+	DYR121end   = 488
+	DYR122start = 489
+	DYR122end   = 490
+	DYR124start = 491
+	DYR124end   = 493
+	DYR125start = 494
+	DYR125end   = 495
+	DYR128start = 496
+	DYR128end   = 497
+	DYR132start = 498
+	DYR132end   = 499
 )
+
+// palindromicRegions holds the start and end index for each
+// palindromic marker outside the Family Tree DNA 111 marker range.
+var palindromicRegions = [][2]int{
+	{DYS526start, DYS526end},
+	{DYS527start, DYS527end},
+	{DYS528start, DYS528end},
+	{DYS725start, DYS725end},
+	{DYF371start, DYF371end},
+	{DYF380start, DYF380end},
+	{DYF381start, DYF381end},
+	{DYF383start, DYF383end},
+	{DYF384start, DYF384end},
+	{DYF385start, DYF385end},
+	{DYF386start, DYF386end},
+	{DYF387start, DYF387end},
+	{DYF390start, DYF390end},
+	{DYF391start, DYF391end},
+	{DYF396start, DYF396end},
+	{DYF398start, DYF398end},
+	{DYF399start, DYF399end},
+	{DYF400start, DYF400end},
+	{DYF401start, DYF401end},
+	{DYF403start, DYF403end},
+	{DYF404start, DYF404end},
+	{DYF405start, DYF405end},
+	{DYF407start, DYF407end},
+	{DYF408start, DYF408end},
+	{DYF409start, DYF409end},
+	{DYF410start, DYF410end},
+	{DYF411start, DYF411end},
+	{DYF412start, DYF412end},
+	{DYR9start, DYR9end},
+	{DYR17start, DYR17end},
+	{DYR18start, DYR18end},
+	{DYR35start, DYR35end},
+	{DYR36start, DYR36end},
+	{DYR38start, DYR38end},
+	{DYR45start, DYR45end},
+	{DYR58start, DYR58end},
+	{DYR63start, DYR63end},
+	{DYR64start, DYR64end},
+	{DYR66start, DYR66end},
+	{DYR67start, DYR67end},
+	{DYR68start, DYR68end},
+	{DYR88start, DYR88end},
+	{DYR121start, DYR121end},
+	{DYR122start, DYR122end},
+	{DYR124start, DYR124end},
+	{DYR125start, DYR125end},
+	{DYR128start, DYR128end},
+	{DYR132start, DYR132end},
+}
 
 // yFullToIndex maps YFull marker names to the index that
 // is used inside this program.
@@ -219,6 +369,15 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		return distance
 	} */
 
+	// palindromic calculates the genetic distance of palindromic markers.
+	var palindromic = func(markers1, markers2 []float64, mutationRate float64) (distance float64) {
+		if isValidPalindromic(markers1, markers2, mutationRate) {
+			distance = distancePalindromic(markers1, markers2, mutationRate)
+			nCompared += len(markers1)
+		}
+		return distance
+	}
+
 	// Check if values for special markers exist.
 	DYS389exists := false
 	if ystr1[DYS389i] != 0 &&
@@ -247,38 +406,31 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	if isValidPalindromic(values1, values2, mutationRates[DYS464end]) {
 		distances[DYS464end] = distancePalindromic(values1, values2, mutationRates[DYS464end])
 		// The extremely rare cases of more than 4 DYS464 markers are ignored for counting.
+		// I assume that the typical mutation rates have been derived using the common four markers.
 		nCompared += DYS464end - DYS464start + 1
 	}
 	for i := DYS464end + 1; i < YCAIIstart; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if isValidPalindromic(ystr1[YCAIIstart:YCAIIend+1], ystr2[YCAIIstart:YCAIIend+1], mutationRates[YCAIIend]) {
-		distances[YCAIIend] = distancePalindromic(ystr1[YCAIIstart:YCAIIend+1], ystr2[YCAIIstart:YCAIIend+1], mutationRates[YCAIIend])
-		nCompared += YCAIIend - YCAIIstart + 1
-	}
+	distances[YCAIIend] = palindromic(ystr1[YCAIIstart:YCAIIend+1], ystr2[YCAIIstart:YCAIIend+1], mutationRates[YCAIIend])
 	for i := YCAIIend + 1; i < CDYstart; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if isValidPalindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend]) {
-		distances[CDYend] = distancePalindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend])
-		nCompared += 2
-	}
+	distances[CDYend] = palindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend])
 	for i := CDYend + 1; i < DYF395S1start; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if isValidPalindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1], mutationRates[DYF395S1end]) {
-		distances[DYF395S1end] = distancePalindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1], mutationRates[DYF395S1end])
-		nCompared += 2
-	}
+	distances[DYF395S1end] = palindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1], mutationRates[DYF395S1end])
 	for i := DYF395S1end + 1; i < DYS413start; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if isValidPalindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1], mutationRates[DYS413end]) {
-		distances[DYS413end] = distancePalindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1], mutationRates[DYS413end])
-		nCompared += 2
-	}
-	for i := DYS413end + 1; i < MaxMarkers; i++ {
+	distances[DYS413end] = palindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1], mutationRates[DYS413end])
+	for i := DYS413end + 1; i < DYS526start; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+	}
+	// Distances for palindromic markers outside Family Tree DNA's 111 marker range.
+	for _, region := range palindromicRegions {
+		distances[region[1]] = palindromic(ystr1[region[0]:region[1]+1], ystr2[region[0]:region[1]+1], mutationRates[region[1]])
 	}
 	return average(distances, nCompared)
 }

@@ -163,7 +163,22 @@ Phylofriend's results may also differ from other programs
 because Phylo\-friend uses it's own hybrid mutation model.
 
 
-\subsection{Extract Data from a Spreadsheet}
+\subsection{Use Data from YFull}
+
+\href{http://yfull.com/}{YFull} usually reports about 400
+Y-STR marker results. To use these results put the YFull 
+result files for every single person into a directory, for
+example \emph{inputdir}. Call Phylofriend by typing:
+
+\noindent\texttt{phylofriend -personsin inputdir -phylipout infile -modal\\
+-gentime 32 -mrin 500-average.txt}
+
+This command will use up to 500 markers for comparison. The
+mutation rates for 500 markers are still experimental.
+
+
+
+\subsection{Extract Data from a Spreadsheet in CSV format}
 
 Spreadsheet data is often uncomfortable to handle, especially
 if you want to write your own program and need to parse it.

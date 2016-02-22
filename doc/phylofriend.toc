@@ -8,21 +8,23 @@
 \contentsline {subsection}{\numberline {4.3}Use a Specific Set of Mutation Rates}{7}{subsection.4.3}
 \contentsline {subsection}{\numberline {4.4}Calibrate Your Data}{7}{subsection.4.4}
 \contentsline {subsection}{\numberline {4.5}Count Mutations}{8}{subsection.4.5}
-\contentsline {subsection}{\numberline {4.6}Extract Data from a Spreadsheet}{8}{subsection.4.6}
+\contentsline {subsection}{\numberline {4.6}Use Data from YFull}{8}{subsection.4.6}
+\contentsline {subsection}{\numberline {4.7}Extract Data from a Spreadsheet in CSV format}{9}{subsection.4.7}
 \contentsline {section}{\numberline {5}Technicalities}{10}{section.5}
 \contentsline {subsection}{\numberline {5.1}Source Code Documentation}{10}{subsection.5.1}
 \contentsline {subsection}{\numberline {5.2}Mutation Model}{10}{subsection.5.2}
 \contentsline {subsection}{\numberline {5.3}Mutation Rates}{10}{subsection.5.3}
 \contentsline {subsection}{\numberline {5.4}CSV Input Format}{12}{subsection.5.4}
 \contentsline {subsection}{\numberline {5.5}Text Format}{12}{subsection.5.5}
-\contentsline {subsection}{\numberline {5.6}PHYLIP Format}{12}{subsection.5.6}
-\contentsline {section}{\numberline {6}Theory}{13}{section.6}
-\contentsline {subsection}{\numberline {6.1}Haplogroups}{13}{subsection.6.1}
-\contentsline {subsection}{\numberline {6.2}Haplotypes}{14}{subsection.6.2}
-\contentsline {subsection}{\numberline {6.3}Phylogenetic Trees}{14}{subsection.6.3}
-\contentsline {subsection}{\numberline {6.4}Genetic Distance}{16}{subsection.6.4}
-\contentsline {subsection}{\numberline {6.5}Modal Haplotype}{18}{subsection.6.5}
-\contentsline {subsection}{\numberline {6.6}Age Calculation}{18}{subsection.6.6}
-\contentsline {subsubsection}{\numberline {6.6.1}Mutation Counting}{18}{subsubsection.6.6.1}
-\contentsline {subsection}{\numberline {6.7}From Distances to Trees}{20}{subsection.6.7}
-\contentsline {section}{References}{24}{section*.4}
+\contentsline {subsection}{\numberline {5.6}YFull Format}{13}{subsection.5.6}
+\contentsline {subsection}{\numberline {5.7}PHYLIP Format}{13}{subsection.5.7}
+\contentsline {section}{\numberline {6}Theory}{14}{section.6}
+\contentsline {subsection}{\numberline {6.1}Haplogroups}{14}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Haplotypes}{15}{subsection.6.2}
+\contentsline {subsection}{\numberline {6.3}Phylogenetic Trees}{15}{subsection.6.3}
+\contentsline {subsection}{\numberline {6.4}Genetic Distance}{17}{subsection.6.4}
+\contentsline {subsection}{\numberline {6.5}Modal Haplotype}{19}{subsection.6.5}
+\contentsline {subsection}{\numberline {6.6}Age Calculation}{19}{subsection.6.6}
+\contentsline {subsubsection}{\numberline {6.6.1}Mutation Counting}{19}{subsubsection.6.6.1}
+\contentsline {subsection}{\numberline {6.7}From Distances to Trees}{21}{subsection.6.7}
+\contentsline {section}{References}{25}{section*.4}
