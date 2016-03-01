@@ -1,3 +1,9 @@
+2016-03-01
+- Support for multiple input files using the personsin
+  option.
+- Added mutation rates "12-count.txt", "37-count.txt",...
+  for easy mutation counting.
+
 2016-02-22
 - Mutation model for 500 markers.
 - Experimental mutation rates for 500 and 390 markers.

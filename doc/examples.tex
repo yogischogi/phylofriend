@@ -162,6 +162,24 @@ have tested for different numbers of markers.
 Phylofriend's results may also differ from other programs
 because Phylo\-friend uses it's own hybrid mutation model.
 
+An alternative approach to mutation counting is using a set
+of mutation rates that was especially created for that purpose,
+for example:
+
+\noindent\texttt{phylofriend -personsin persons.csv -phylipout distancecount.txt\\
+-mrin 37-count.txt}
+
+The difference to the previous example is that the \emph{nmarkers}
+option in the previous example makes sure that all persons
+have tested for all 37 markers, while the use of the
+\emph{37-count} mutation rate also accepts persons who have
+tested for a lower number of markers. The result is an estimate.
+This option was introduced because next generation sequencing
+reveals Y-STR results for about 500 markers. However due to
+the technical restrictions of this method, different persons
+usually get results for different, but largely overlapping,
+marker sets.
+
 
 \subsection{Use Data from YFull}
 

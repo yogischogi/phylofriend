@@ -56,23 +56,28 @@ func main() {
 		}
 	}
 
-	// Read persons from file or exit if no file is provided.
+	// Read persons from files or exit if no file or wrong filename is provided.
 	if *personsin != "" {
-		fileInfo, err := os.Stat(*personsin)
-		switch {
-		case err != nil:
-			fmt.Printf("Error, something is wrong with personsin, %v.\n", err)
-			os.Exit(1)
-		case fileInfo.IsDir():
-			persons, err = genfiles.ReadPersonsFromDir(*personsin)
-		case strings.HasSuffix(strings.ToLower(*personsin), ".csv"):
-			persons, err = genfiles.ReadPersonsFromCSV(*personsin, *labelcol-1)
-		default:
-			persons, err = genfiles.ReadPersonsFromTXT(*personsin)
-		}
-		if err != nil {
-			fmt.Printf("Error loading persons data %v.\n", err)
-			os.Exit(1)
+		filenames := strings.Split(*personsin, ",")
+		for _, filename := range filenames {
+			var pers []*genetic.Person
+			fileInfo, err := os.Stat(filename)
+			switch {
+			case err != nil:
+				fmt.Printf("Error, something is wrong with personsin, %v.\n", err)
+				os.Exit(1)
+			case fileInfo.IsDir():
+				pers, err = genfiles.ReadPersonsFromDir(filename)
+			case strings.HasSuffix(strings.ToLower(filename), ".csv"):
+				pers, err = genfiles.ReadPersonsFromCSV(filename, *labelcol-1)
+			default:
+				pers, err = genfiles.ReadPersonsFromTXT(filename)
+			}
+			if err != nil {
+				fmt.Printf("Error loading persons data %v.\n", err)
+				os.Exit(1)
+			}
+			persons = append(persons, pers...)
 		}
 	} else {
 		// Exit program because all following operations
