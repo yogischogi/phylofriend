@@ -1,3 +1,7 @@
+2016-03-02
+- Added DYR171.
+- Fixed DYF390 bug in translationtable.
+
 2016-03-01
 - Support for multiple input files using the personsin
   option.
