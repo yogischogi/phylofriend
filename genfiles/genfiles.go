@@ -277,7 +277,7 @@ func ReadPersonFromYFull(filename string) (*genetic.Person, error) {
 	for _, record := range records {
 		markerName := record[0]
 		markerValue := record[1]
-		if markerValue != "n/a" {
+		if markerValue != "n/a" && markerValue != "" {
 			if strings.HasSuffix(markerValue, ".a") ||
 				strings.HasSuffix(markerValue, ".g") ||
 				strings.HasSuffix(markerValue, ".c") ||
