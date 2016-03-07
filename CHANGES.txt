@@ -1,3 +1,10 @@
+2016-03-07
+- genetic.Distance allows values < 0.
+  This has been introduced to be compatible with the
+  upcoming new method to calculate modal haplotypes in
+  the Phyloage program, which will allow missing and
+  invalid values.
+
 2016-03-05
 - Empty values in YFull files are now allowed.
 - Updated experimental mutation rates for 500 and 390

@@ -295,7 +295,7 @@ func distancesMarkerCount(ystr1, ystr2 YstrMarkers) (distances []float64, nCompa
 	nCompared = 0
 	distances = make([]float64, MaxMarkers)
 	for i := 0; i < MaxMarkers; i++ {
-		if ystr1[i] != 0 && ystr2[i] != 0 {
+		if ystr1[i] > 0 && ystr2[i] > 0 {
 			distances[i] = math.Abs(ystr1[i] - ystr2[i])
 			nCompared++
 		}
@@ -347,7 +347,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	// two persons using the stepwise mutation model
 	// (http://nitro.biosci.arizona.edu/ftDNA/models.html).
 	var stepwise = func(marker1, marker2, mutationRate float64) (distance float64) {
-		if marker1 != 0 && marker2 != 0 && mutationRate != 0 {
+		if marker1 > 0 && marker2 > 0 && mutationRate > 0 {
 			distance = math.Abs(marker1-marker2) / mutationRate
 			nCompared++
 		}
@@ -358,7 +358,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	// two persons using the infinite allelles mutation model
 	// (http://nitro.biosci.arizona.edu/ftDNA/models.html).
 	var infinite = func(marker1, marker2, mutationRate float64) (distance float64) {
-		if marker1 != 0 && marker2 != 0 && mutationRate != 0 {
+		if marker1 > 0 && marker2 > 0 && mutationRate > 0 {
 			if marker1 != marker2 {
 				distance = 1 / mutationRate
 			} else {
@@ -380,10 +380,10 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 
 	// Check if values for special markers exist.
 	DYS389exists := false
-	if ystr1[DYS389i] != 0 &&
-		ystr2[DYS389i] != 0 &&
-		ystr1[DYS389ii] != 0 &&
-		ystr2[DYS389ii] != 0 {
+	if ystr1[DYS389i] > 0 &&
+		ystr2[DYS389i] > 0 &&
+		ystr1[DYS389ii] > 0 &&
+		ystr2[DYS389ii] > 0 {
 		DYS389exists = true
 	}
 
@@ -392,7 +392,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	for i := 0; i < DYS389ii; i++ {
 		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
 	}
-	if DYS389exists && mutationRates[DYS389ii] != 0 {
+	if DYS389exists && mutationRates[DYS389ii] > 0 {
 		distances[DYS389ii] = distanceDYS389ii(ystr1[DYS389i], ystr1[DYS389ii], ystr2[DYS389i], ystr2[DYS389ii]) / mutationRates[DYS389ii]
 		nCompared++
 	}
