@@ -181,6 +181,42 @@ usually get results for different, but largely overlapping,
 marker sets.
 
 
+\subsection{Marker Statistics}
+
+Phylofriend can give you detailed statistics about marker
+values. It calculates the minimal and maximal value for each
+marker and the number of occurrences. You can activate the
+statistical output by using the \texttt{-statistics=true}
+option, for example
+
+\vspace{1ex}
+\noindent\texttt{phylofriend -personsin=s11481.csv -statistics=true -nmarkers=6}
+\vspace{1ex}
+
+\noindent prints out the results for the first six markers
+(\texttt{-nmarkers=6}). In our example it is assumed that
+the persons' data is in a file called \emph{s11481.csv}.
+This is the output:
+
+\begin{verbatim}
+DYS393, Min: 13, Max: 13, 13:15,
+DYS390, Min: 24, Max: 24, 24:15,
+DYS19, Min: 14, Max: 14, 14:15,
+DYS391, Min: 10, Max: 11, 11:14, 10:1,
+DYS385a, Min: 11, Max: 12, 11:10, 12:5,
+DYS385b, Min: 12, Max: 14, 12:1, 14:14,
+\end{verbatim}
+
+\noindent
+Each line contains the marker name and the minimal and
+maximal values. After that each marker value is listed
+together with it's frequency, separated by a colon.
+
+Let's take DYS391 as an example. It has two values,
+10 and 11. The value 10 occurs 1 time and the value
+11 occurs 14 times.
+
+
 \subsection{Use Data from YFull}
 
 \href{http://yfull.com/}{YFull} usually reports about 400
@@ -188,12 +224,14 @@ Y-STR marker results. To use these results put the YFull
 result files for every single person into a directory, for
 example \emph{inputdir}. Call Phylofriend by typing:
 
+\vspace{1ex}
 \noindent\texttt{phylofriend -personsin inputdir -phylipout infile -modal\\
 -gentime 32 -mrin 500-average.txt}
+\vspace{1ex}
 
+\noindent
 This command will use up to 500 markers for comparison. The
 mutation rates for 500 markers are still experimental.
-
 
 
 \subsection{Extract Data from a Spreadsheet in CSV format}
@@ -205,8 +243,11 @@ option. It writes data to a text file in simplified form.
 
 The easiest way to use it is
 
+\vspace{1ex}
 \noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt}
+\vspace{1ex}
 
+\noindent
 This extracts the data from \emph{persons.csv} and writes
 it to \emph{persons.txt}. The first column of \emph{persons.txt}
 contains the first column found in \emph{persons.csv}, usually
@@ -216,9 +257,12 @@ All columns are separated by tabs.
 If you want to use another column you can use the
 \emph{labelcol} option:
 
+\vspace{1ex}
 \noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt\\
 -labelcol 2}
+\vspace{1ex}
 
+\noindent
 This extracts the second column from \emph{persons.csv} and
 writes it to the first column of \emph{persons.txt}.
 
@@ -229,6 +273,7 @@ of Y-STR values to each line. Missing values are written as
 0, larger sets of Y-STR values are truncated. This is how to
 write a full set of 111 markers:
 
+\vspace{1ex}
 \noindent\texttt{phylofriend -personsin persons.csv -txtout persons.txt\\
 -nmarkers 111}
 

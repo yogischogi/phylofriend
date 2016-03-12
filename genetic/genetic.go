@@ -502,22 +502,27 @@ func distancePalindromic(ystr1, ystr2 []float64, mutationRate float64) float64 {
 // for two samples ystr1 and ystr2 is valid for further processing.
 // The marker is considered valid if both ystr1 and ystr2 contain
 // at least one value > 0 and the mutation rate is also > 0.
+// If a value is < 0, this method also returns false.
 func isValidPalindromic(ystr1, ystr2 []float64, mutationRate float64) bool {
 	if mutationRate == 0 {
 		return false
 	}
 	isValid1 := false
 	for _, value := range ystr1 {
+		if value < 0 {
+			return false
+		}
 		if value > 0 {
 			isValid1 = true
-			break
 		}
 	}
 	isValid2 := false
 	for _, value := range ystr2 {
+		if value < 0 {
+			return false
+		}
 		if value > 0 {
 			isValid2 = true
-			break
 		}
 	}
 	return isValid1 && isValid2
@@ -693,6 +698,59 @@ func ReduceToMarkerSet(persons []*Person, nMarkers int) ([]*Person, error) {
 		return result, errors.New("not enough persons who have tested for so many markers")
 	}
 	return result, nil
+}
+
+// MarkerStatistics holds a map for each single marker.
+// The map contains the marker's values as keys and the frequencies
+// of the values as values.
+type MarkerStatistics [MaxMarkers + NDYS464ext]map[float64]int
+
+// Statistics returns a detailed statistic about the Y-STR markers
+// of persons.
+func Statistics(persons []*Person) *MarkerStatistics {
+	result := MarkerStatistics{}
+	for i, _ := range result {
+		for j, _ := range persons {
+			value := persons[j].YstrMarkers[i]
+			if value > 0 {
+				if result[i] == nil {
+					result[i] = make(map[float64]int)
+				}
+				if _, exists := result[i][value]; exists {
+					result[i][value] += 1
+				} else {
+					result[i][value] = 1
+				}
+			}
+		}
+	}
+	return &result
+}
+
+func (s *MarkerStatistics) String() string {
+	var buffer bytes.Buffer
+	for marker, statistics := range s {
+		if statistics != nil {
+			// Create output for single marker statistics.
+			name := YstrMarkerTable[marker].InternalName
+			min := 0.0
+			max := 0.0
+			for value, _ := range statistics {
+				if value > max {
+					max = value
+				}
+				if value < min || min == 0 {
+					min = value
+				}
+			}
+			buffer.WriteString(fmt.Sprintf("%s, Min: %.f, Max: %.f, ", name, min, max))
+			for value, frequency := range statistics {
+				buffer.WriteString(fmt.Sprintf("%.f:%d, ", value, frequency))
+			}
+			buffer.WriteString("\n")
+		}
+	}
+	return buffer.String()
 }
 
 // Average calculates the average and the standard deviation

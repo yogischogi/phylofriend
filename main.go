@@ -14,18 +14,19 @@ import (
 func main() {
 	// Command line flags.
 	var (
-		personsin = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
-		labelcol  = flag.Int("labelcol", 1, "Column number for labels in CSV file.")
-		mrin      = flag.String("mrin", "", "Filename for the import of mutation rates.")
-		phylipout = flag.String("phylipout", "", "Output filename for PHYLIP distance matrix.")
-		txtout    = flag.String("txtout", "", "Output filename for persons in text format.")
-		nmarkers  = flag.Int("nmarkers", 0, "Uses only the given number of markers for calculations.")
-		mrout     = flag.String("mrout", "", "Filename for the export of mutation rates.")
-		anonymize = flag.Bool("anonymize", false, "Anonymizes persons' private data.")
-		cal       = flag.Float64("cal", 1, "Calibration factor for PHYLIP output.")
-		gentime   = flag.Float64("gentime", 1, "Generation time in years.")
-		modal     = flag.Bool("modal", false, "Creates modal haplotype.")
-		reduce    = flag.Int("reduce", 1, "Reduces the number of persons (for big trees).")
+		personsin  = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
+		labelcol   = flag.Int("labelcol", 1, "Column number for labels in CSV file.")
+		mrin       = flag.String("mrin", "", "Filename for the import of mutation rates.")
+		phylipout  = flag.String("phylipout", "", "Output filename for PHYLIP distance matrix.")
+		txtout     = flag.String("txtout", "", "Output filename for persons in text format.")
+		nmarkers   = flag.Int("nmarkers", 0, "Uses only the given number of markers for calculations.")
+		mrout      = flag.String("mrout", "", "Filename for the export of mutation rates.")
+		anonymize  = flag.Bool("anonymize", false, "Anonymizes persons' private data.")
+		cal        = flag.Float64("cal", 1, "Calibration factor for PHYLIP output.")
+		gentime    = flag.Float64("gentime", 1, "Generation time in years.")
+		modal      = flag.Bool("modal", false, "Creates modal haplotype.")
+		reduce     = flag.Int("reduce", 1, "Reduces the number of persons (for big trees).")
+		statistics = flag.Bool("statistics", false, "Prints marker statistics.")
 	)
 	flag.Parse()
 
@@ -107,6 +108,11 @@ func main() {
 	// Anonymize persons data.
 	if *anonymize == true {
 		persons = genetic.Anonymize(persons)
+	}
+
+	// Print marker statistics.
+	if *statistics == true {
+		fmt.Print(genetic.Statistics(persons).String())
 	}
 
 	// Create modal haplotype.

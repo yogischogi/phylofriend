@@ -1,9 +1,14 @@
+
+2016-03-12
+- New genetic.MarkerStatistics.
+- genetic.isValidPalindromic returns false if one marker
+  is < 0.
+
+2016-03-08
+- genetic.isValidPalindromic tests for uncertain values.
+
 2016-03-07
-- genetic.Distance allows values < 0.
-  This has been introduced to be compatible with the
-  upcoming new method to calculate modal haplotypes in
-  the Phyloage program, which will allow missing and
-  invalid values.
+- genetic.Distance ignores values < 0.
 
 2016-03-05
 - Empty values in YFull files are now allowed.
