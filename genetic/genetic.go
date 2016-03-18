@@ -267,7 +267,7 @@ type YstrMarkers [MaxMarkers + NDYS464ext]float64
 func (y *YstrMarkers) String() string {
 	var buffer bytes.Buffer
 	for i, _ := range YstrMarkerTable {
-		text := fmt.Sprintf("%s: %.f, ", YstrMarkerTable[i].InternalName, y[i])
+		text := fmt.Sprintf("%s: %g, ", YstrMarkerTable[i].InternalName, y[i])
 		buffer.WriteString(text)
 	}
 	buffer.WriteString("\n")
@@ -743,9 +743,9 @@ func (s *MarkerStatistics) String() string {
 					min = value
 				}
 			}
-			buffer.WriteString(fmt.Sprintf("%s, Min: %.f, Max: %.f, ", name, min, max))
+			buffer.WriteString(fmt.Sprintf("%s, Min: %g, Max: %g, ", name, min, max))
 			for value, frequency := range statistics {
-				buffer.WriteString(fmt.Sprintf("%.f:%d, ", value, frequency))
+				buffer.WriteString(fmt.Sprintf("%g:%d, ", value, frequency))
 			}
 			buffer.WriteString("\n")
 		}
