@@ -112,7 +112,7 @@ func main() {
 
 	// Print marker statistics.
 	if *statistics == true {
-		fmt.Print(genetic.Statistics(persons).String())
+		fmt.Print(genetic.NewStatistics(persons).String())
 	}
 
 	// Create modal haplotype.

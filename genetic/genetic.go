@@ -700,28 +700,68 @@ func ReduceToMarkerSet(persons []*Person, nMarkers int) ([]*Person, error) {
 	return result, nil
 }
 
-// MarkerStatistics holds a map for each single marker.
-// The map contains the marker's values as keys and the frequencies
-// of the values as values.
-type MarkerStatistics [MaxMarkers + NDYS464ext]map[float64]int
+// MarkerStatistics represents statistical information about
+// each marker's values and frequencies.
+type MarkerStatistics struct {
+	// NSamples is the total number of Samples.
+	NSamples int
+	// Markers holds statistical information for each single marker.
+	Markers [MaxMarkers + NDYS464ext]struct {
+		// FrequencyAmongSamples normed to 1.
+		FrequencyAmongSamples float64
+		// ValuesFrequencies is a map of mutation values and
+		// their number of occurrences.
+		ValuesOccurrences map[float64]int
+	}
+}
 
-// Statistics returns a detailed statistic about the Y-STR markers
+// NewStatistics returns a detailed statistic about the Y-STR markers
 // of persons.
-func Statistics(persons []*Person) *MarkerStatistics {
+func NewStatistics(persons []*Person) *MarkerStatistics {
 	result := MarkerStatistics{}
-	for i, _ := range result {
+	result.NSamples = len(persons)
+	if result.NSamples == 0 {
+		return &result
+	}
+	for i, _ := range result.Markers {
+		nMutations := 0.0
 		for j, _ := range persons {
 			value := persons[j].YstrMarkers[i]
 			if value > 0 {
-				if result[i] == nil {
-					result[i] = make(map[float64]int)
+				nMutations++
+				if result.Markers[i].ValuesOccurrences == nil {
+					result.Markers[i].ValuesOccurrences = make(map[float64]int)
 				}
-				if _, exists := result[i][value]; exists {
-					result[i][value] += 1
+				if _, exists := result.Markers[i].ValuesOccurrences[value]; exists {
+					result.Markers[i].ValuesOccurrences[value] += 1
 				} else {
-					result[i][value] = 1
+					result.Markers[i].ValuesOccurrences[value] = 1
 				}
 			}
+		}
+		result.Markers[i].FrequencyAmongSamples = nMutations / float64(result.NSamples)
+	}
+	return &result
+}
+
+// Select returns a MarkerStatistics where only markers are included,
+// that satisfy the following conditions:
+//
+//   The marker must occur at least at a frequency > minFrequency.
+//   minFrequency must be >= 0 and <= 1.
+//
+//   The marker must have at least nValuesMin different mutational values.
+//
+//   The marker number of different mutational values may not be larger than nValuesMax.
+func (s *MarkerStatistics) Select(minFrequency float64, nValuesMin, nValuesMax int) *MarkerStatistics {
+	result := MarkerStatistics{}
+	result.NSamples = s.NSamples
+	for i, _ := range s.Markers {
+		if s.Markers[i].FrequencyAmongSamples >= minFrequency &&
+			s.Markers[i].ValuesOccurrences != nil &&
+			len(s.Markers[i].ValuesOccurrences) >= nValuesMin &&
+			len(s.Markers[i].ValuesOccurrences) <= nValuesMax {
+			result.Markers[i] = s.Markers[i]
 		}
 	}
 	return &result
@@ -729,13 +769,14 @@ func Statistics(persons []*Person) *MarkerStatistics {
 
 func (s *MarkerStatistics) String() string {
 	var buffer bytes.Buffer
-	for marker, statistics := range s {
-		if statistics != nil {
+	buffer.WriteString(fmt.Sprintf("Total number of samples: %d\n", s.NSamples))
+	for marker, statistics := range s.Markers {
+		if statistics.ValuesOccurrences != nil {
 			// Create output for single marker statistics.
 			name := YstrMarkerTable[marker].InternalName
 			min := 0.0
 			max := 0.0
-			for value, _ := range statistics {
+			for value, _ := range statistics.ValuesOccurrences {
 				if value > max {
 					max = value
 				}
@@ -743,14 +784,55 @@ func (s *MarkerStatistics) String() string {
 					min = value
 				}
 			}
-			buffer.WriteString(fmt.Sprintf("%s, Min: %g, Max: %g, ", name, min, max))
-			for value, frequency := range statistics {
+			buffer.WriteString(fmt.Sprintf("%s, Frequency: %.2f, Min: %g, Max: %g, ",
+				name, statistics.FrequencyAmongSamples, min, max))
+			for value, frequency := range statistics.ValuesOccurrences {
 				buffer.WriteString(fmt.Sprintf("%g:%d, ", value, frequency))
 			}
 			buffer.WriteString("\n")
 		}
 	}
 	return buffer.String()
+}
+
+// MutationRates returns a set of mutation rates in JSON format,
+// ready to be used with Phylofriend.
+// All mutation rates are set to 1/(number of markers), so that
+// they can be used for marker counting.
+func (s *MarkerStatistics) MutationRates() string {
+	var buffer bytes.Buffer
+	var result string
+
+	// Count markers.
+	nMarkers := 0
+	for _, statistics := range s.Markers {
+		if statistics.ValuesOccurrences != nil {
+			nMarkers++
+		}
+	}
+	// Build result string.
+	if nMarkers == 0 {
+		result = "{}"
+	} else {
+		value := 1 / float64(nMarkers)
+		lines := make([]string, 0, nMarkers)
+		for marker, statistics := range s.Markers {
+			if statistics.ValuesOccurrences != nil {
+				name := YstrMarkerTable[marker].InternalName
+				lines = append(lines, fmt.Sprintf("%q:%g", name, value))
+			}
+		}
+		// Create JSON format.
+		buffer.WriteString("{")
+		for i := 0; i < nMarkers-1; i++ {
+			buffer.WriteString(lines[i])
+			buffer.WriteString(",\n")
+		}
+		buffer.WriteString(lines[nMarkers-1])
+		buffer.WriteString("}")
+		result = buffer.String()
+	}
+	return result
 }
 
 // Average calculates the average and the standard deviation
