@@ -48,13 +48,32 @@ func ReadPersonsFromCSV(filename string, labelCol int) ([]*genetic.Person, error
 		return nil, err
 	}
 
+	// Extract lines that contain data of a sample.
+	sampleRecords := make([][]string, 0, 1000)
+	strIdx := 0
+	for _, record := range records {
+		strIdx = isSampleRecord(record)
+		if strIdx > 0 {
+			sampleRecords = append(sampleRecords, record)
+		}
+	}
+
+	// Try to determine file format.
+	// If the file format is Family Tree DNA, then DYS464
+	// values are separated by a "-".
+	DYS464idx := strIdx + 19
+	isFTDNA := false
+	for _, record := range sampleRecords {
+		if strings.Contains(record[DYS464idx], "-") {
+			isFTDNA = true
+			break
+		}
+	}
+
 	// Extract persons data from CSV records.
 	persons := make([]*genetic.Person, 0, 1000)
-	for _, record := range records {
-		// Try to extract person data from a record.
-		// CSV lines often contain non person data.
-		// So an error here happens often and is ignored.
-		person, err := personFromFields(record, labelCol)
+	for _, record := range sampleRecords {
+		person, err := personFromFields(record, labelCol, strIdx, isFTDNA)
 		if err == nil {
 			persons = append(persons, person)
 		}
@@ -62,45 +81,51 @@ func ReadPersonsFromCSV(filename string, labelCol int) ([]*genetic.Person, error
 	return persons, nil
 }
 
-// personFromFields creates a person from a slice of strings.
-//
-// The first field must contain the ID of the person. labelIndex
-// is the field's index that is used for the person's Label field.
-func personFromFields(fields []string, labelIndex int) (*genetic.Person, error) {
-	var person genetic.Person
-	var err error
-
+// sampleRecord tries to determine if a given record is a
+// valid entry of a sample containing STR data.
+// If this is true, the function returns the start index
+// of the STR data. Otherwise strIdx = 0.
+func isSampleRecord(fields []string) (strIdx int) {
 	// A valid entry must have at least one Id and 12 Y-STR values.
-	// Throw everything else away.
 	if len(fields) < 13 {
-		return nil, errors.New("not enough data fields")
+		return 0
 	}
-
 	// Try to determine the start of the Y-STR values.
 	// Results starts with DYS393, which is in the range 9-17.
-	resultsStart := 0
 	for i, field := range fields {
 		dys393, err := strconv.ParseFloat(field, 64)
 		if err == nil && dys393 >= 9 && dys393 < 17 {
-			resultsStart = i
+			strIdx = i
 			break
 		}
 	}
-	// Return if the start of the DYS values could not be found.
-	if resultsStart < 1 {
-		return nil, errors.New("DYS393 not found")
-	}
+	return strIdx
+}
+
+// personFromFields creates a person from a slice of strings.
+//
+// The first field must contain the ID of the person.
+// labelIdx is the field's index that is used for the person's Label field.
+// strIdx is the index of the first STR marker value.
+// isFTDNA determines if the format of the fields is Family Tree DNA like
+// with palindromic values separated by "-" or not.
+func personFromFields(fields []string, labelIdx, strIdx int, isFTDNA bool) (*genetic.Person, error) {
+	var person genetic.Person
+	var err error
 
 	// The ID is usually the Kit number.
 	person.ID = strings.TrimSpace(fields[0])
-
 	// Return if the ID is too short.
 	if len(person.ID) < 1 {
 		return nil, errors.New("could not determine person ID")
 	}
 
-	person.Label = stringToLabel(strings.TrimSpace(fields[labelIndex]))
-	person.YstrMarkers, err = extractYstrMarkers(fields[resultsStart:])
+	person.Label = stringToLabel(strings.TrimSpace(fields[labelIdx]))
+	if isFTDNA {
+		person.YstrMarkers, err = extractYstrMarkersFTDNA(fields[strIdx:])
+	} else {
+		person.YstrMarkers, err = extractYstrMarkers(fields[strIdx:])
+	}
 	return &person, err
 }
 
@@ -114,42 +139,8 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 		fields[i] = strings.TrimSpace(fields[i])
 	}
 
-	// Make sure that DYS464 contains exactly four values.
-	// Many spreadsheets contain four separate columns for DYS464
-	// but in Family Tree DNA notation it is denoted like "15-15-17-18".
-	DYS464pos := 19
-	if strings.Contains(fields[DYS464pos], "-") {
-		values := strings.Split(fields[DYS464pos], "-")
-		if len(values) > 4 {
-			// Copy first four values back into DYS464 field.
-			fields[DYS464pos] = strings.Join(values[0:4], "-")
-			// Store extra DYS464 values in the upper storage area for DYS464.
-			for i := 4; i < len(values); i++ {
-				value, err := stringToSTR(values[i])
-				if err != nil {
-					return markers, err
-				}
-				markers[genetic.DYS464extStart+i-4] = value
-			}
-		} else if len(values) < 4 {
-			complete := make([]string, 4)
-			copy(complete, values)
-			fields[DYS464pos] = strings.Join(complete, "-")
-		}
-	}
-
-	// Concatenate all fields together and separate them by "-", because
-	// FamilyTreeDNA uses "-" as a separator for multicopy markers.
-	concatFields := strings.Join(fields, "-")
-
-	// Extract the fields again using "-" as a separator.
-	// Thus all markers values are separated into individual fields.
-	reader := csv.NewReader(strings.NewReader(concatFields))
-	reader.Comma = '-'
-	strValues, _ := reader.Read()
-
 	// Convert string values to YstrMarkers.
-	for i, strValue := range strValues {
+	for i, strValue := range fields {
 		value, err := stringToSTR(strValue)
 		if err != nil {
 			return markers, err
@@ -157,6 +148,91 @@ func extractYstrMarkers(fields []string) (genetic.YstrMarkers, error) {
 		markers[i] = value
 	}
 	return markers, nil
+}
+
+// extractYstrMarkersFTDNA creates YstrMarkers from a slice of text fields.
+// The entries must be in FamilyTreeDNA order and palindromic marker values
+// must be separated by "-".
+// Palindromic markers or markers with possible multiple values:
+//
+//   DYS19,  1 value,   idx 2,
+//   DYS385, 2 values,  idx 4,
+//   DYS459, 2 values, idx 12,
+//   DYS464, 4 values, idx 19,
+//   YCAII,  2 values, idx 22,
+//   CDY,    2 values, idx 27,
+//   DYF395S1, 2 values, idx 32,
+//   DYS413,   2 values, idx 40.
+func extractYstrMarkersFTDNA(fields []string) (genetic.YstrMarkers, error) {
+	const (
+		DYS385idx   = 4
+		DYS459idx   = 12
+		DYS464idx   = 19
+		YCAIIidx    = 22
+		CDYidx      = 27
+		DYF395S1idx = 32
+		DYS413idx   = 40
+	)
+	var markers genetic.YstrMarkers
+
+	// Trim whitespaces.
+	for i, _ := range fields {
+		fields[i] = strings.TrimSpace(fields[i])
+	}
+
+	outIdx := 0
+	for i, strValue := range fields {
+		switch i {
+		case DYS385idx, DYS459idx, YCAIIidx, CDYidx, DYF395S1idx, DYS413idx:
+			// Extract 2 markers.
+			values, err := extractMarkersFromString(strValue, 2)
+			if err != nil {
+				return markers, err
+			}
+			copy(markers[outIdx:], values)
+			outIdx += 2
+		case DYS464idx:
+			// Extract 4 to 8 markers.
+			values, err := extractMarkersFromString(strValue, 8)
+			if err != nil {
+				return markers, err
+			}
+			copy(markers[genetic.DYS464start:], values[0:4])
+			copy(markers[genetic.DYS464extStart:], values[4:8])
+			outIdx += 4
+		default:
+			// Extract one marker.
+			values, err := extractMarkersFromString(strValue, 1)
+			if err != nil {
+				return markers, err
+			}
+			markers[outIdx] = values[0]
+			outIdx++
+		}
+	}
+	return markers, nil
+}
+
+// extractMarkersFromString extracts marker values from a text field
+// where values are separated by "-".
+// nMarkers is the maximum number of values that should be returned.
+// The returned slice has always the size nMarkers. If no marker
+// could be extracted the corresponding return field has the value 0.
+func extractMarkersFromString(text string, nMarkers int) ([]float64, error) {
+	result := make([]float64, nMarkers, nMarkers)
+	fields := strings.Split(text, "-")
+	count := nMarkers
+	if len(fields) < count {
+		count = len(fields)
+	}
+	for i := 0; i < count; i++ {
+		value, err := stringToSTR(fields[i])
+		if err != nil {
+			return result, err
+		}
+		result[i] = value
+	}
+	return result, nil
 }
 
 // stringToStr converts an Y-STR value in string format to a number.

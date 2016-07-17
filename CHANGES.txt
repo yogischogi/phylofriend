@@ -1,3 +1,12 @@
+2016-07-17
+- genetic.ReadPersonsFromCSV rewritten.
+  The function now cleanly distinguishes between Family
+  Tree DNA format, where multicopy marker values are
+  separated by hyphens, and the traditional format, where
+  each value is placed in a separate column.
+  If a multicopy markers exhibits more values than
+  expected, the extra values are truncated.
+
 2016-03-22
 - genetic: MarkerStatistics contains more information.
 - New MarkerStatistics.Select and
