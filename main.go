@@ -19,6 +19,7 @@ func main() {
 		mrin       = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		phylipout  = flag.String("phylipout", "", "Output filename for PHYLIP distance matrix.")
 		txtout     = flag.String("txtout", "", "Output filename for persons in text format.")
+		htmlout    = flag.String("htmlout", "", "Output filename for persons in HTML format.")
 		nmarkers   = flag.Int("nmarkers", 0, "Uses only the given number of markers for calculations.")
 		mrout      = flag.String("mrout", "", "Filename for the export of mutation rates.")
 		anonymize  = flag.Bool("anonymize", false, "Anonymizes persons' private data.")
@@ -118,7 +119,7 @@ func main() {
 	// Create modal haplotype.
 	if *modal == true {
 		modal := genetic.ModalHaplotype(persons)
-		persons = append(persons, modal)
+		persons = append([]*genetic.Person{modal}, persons...)
 	}
 
 	// Write persons data in text format.
@@ -129,7 +130,20 @@ func main() {
 			err = genfiles.WritePersonsAsTXT(*txtout, persons, genetic.MaxMarkers)
 		}
 		if err != nil {
-			fmt.Printf("Error writing persons data to text file %v.\n", err)
+			fmt.Printf("Error writing persons data to text file, %v.\n", err)
+			os.Exit(1)
+		}
+	}
+
+	// Write persons data in HTML format.
+	if *htmlout != "" {
+		if *nmarkers > 0 {
+			err = genfiles.WritePersonsAsHTML(*htmlout, persons, *nmarkers)
+		} else {
+			err = genfiles.WritePersonsAsHTML(*htmlout, persons, genetic.MaxMarkers)
+		}
+		if err != nil {
+			fmt.Printf("Error writing persons data to HTML file, %v.\n", err)
 			os.Exit(1)
 		}
 	}
@@ -153,9 +167,10 @@ func main() {
 	// Print average distance and standard deviation from modal haplotype.
 	if *modal == true {
 		// Calculate the average distance from the modal haplotype.
-		// The modal haplotype is the last in the distance matrix.
-		// The last entry is the distance to itself. So it has to be removed.
-		m, s, err := genetic.Average(dm.Values[dm.Size-1][0 : dm.Size-1])
+		// The modal haplotype is the first in the distance matrix.
+		// The first entry is the distance to itself. So it has to be removed.
+		m, s, err := genetic.Average(dm.Values[0][1:dm.Size])
+
 		if err != nil {
 			fmt.Printf("Error calculating average and standard deviation, %v.\n", err)
 		}

@@ -439,31 +439,19 @@ func WriteDistanceMatrix(filename string, persons []*genetic.Person, matrix *gen
 
 	writer := bufio.NewWriter(outfile)
 	// Write number of entries
-	_, err = writer.WriteString(fmt.Sprintf("%d\n", matrix.Size))
-	if err != nil {
-		return err
-	}
+	writer.WriteString(fmt.Sprintf("%d\n", matrix.Size))
 
 	// Write lines
 	for row := 0; row < matrix.Size; row++ {
 		// Write name
 		name := persons[row].Label
-		_, err = writer.WriteString(name)
-		if err != nil {
-			return err
-		}
+		writer.WriteString(name)
 		// Write values
 		for col := 0; col < matrix.Size; col++ {
 			value := strconv.FormatFloat(matrix.Values[row][col], 'f', -1, 64)
-			_, err = writer.WriteString("\t" + value)
-			if err != nil {
-				return err
-			}
+			writer.WriteString("\t" + value)
 		}
-		_, err = writer.WriteString("\n")
-		if err != nil {
-			return err
-		}
+		writer.WriteString("\n")
 	}
 	err = writer.Flush()
 	return err
@@ -487,21 +475,93 @@ func WritePersonsAsTXT(filename string, persons []*genetic.Person, nMarkers int)
 
 	writer := bufio.NewWriter(outfile)
 	for _, person := range persons {
-		_, err := writer.WriteString(person.Label)
+		writer.WriteString(person.Label)
 		for i := 0; i < nMarkers; i++ {
 			value := strconv.FormatFloat(person.YstrMarkers[i], 'f', -1, 64)
-			_, err = writer.WriteString("\t" + value)
-			if err != nil {
-				return err
-			}
+			writer.WriteString("\t" + value)
 		}
-		_, err = writer.WriteString("\n")
-		if err != nil {
-			return err
-		}
+		writer.WriteString("\n")
 	}
 	err = writer.Flush()
 	return err
+}
+
+// WritePersonsAsHTML writes person's genetic data to a file in HTML format.
+//
+// nMarkers is the number of Y-STR values that is written. This
+// is usefull if not all persons have tested for the same number
+// of markers.
+func WritePersonsAsHTML(filename string, persons []*genetic.Person, nMarkers int) error {
+	modal := persons[0]
+
+	// Open file.
+	outfile, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer outfile.Close()
+
+	writer := bufio.NewWriter(outfile)
+	// Write header.
+	header := "<!DOCTYPE html>\n" +
+		"<html lang=\"en\">\n" +
+		"<head><title>Y-STR Values</title></head>\n<body>\n<table>\n"
+	writer.WriteString(header)
+
+	// Write table data.
+	writer.WriteString("<tr>")
+	writer.WriteString("<td></td>")
+	for i := 0; i < nMarkers; i++ {
+		writer.WriteString("<td>" + genetic.YstrMarkerTable[i].InternalName + "</td>")
+	}
+	writer.WriteString("</tr>\n")
+	for _, person := range persons {
+		writer.WriteString("<tr>")
+		writer.WriteString("<td>" + person.Label + "</td>")
+		for i := 0; i < nMarkers; i++ {
+			value := strconv.FormatFloat(person.YstrMarkers[i], 'f', -1, 64)
+			writer.WriteString("<td style=\"background-color:" +
+				colorCode(person.YstrMarkers[i], modal.YstrMarkers[i]) +
+				";\">" + value + "</td>")
+		}
+		writer.WriteString("</tr>\n")
+	}
+	// Write page end.
+	pageEnd := "</table>\n</body>\n</html>"
+	writer.WriteString(pageEnd)
+	err = writer.Flush()
+	return err
+}
+
+// colorCode calculates a color for an Y-STR value depending on it's
+// distance to the modal value.
+// It returns a color string that can be used in CSS stylesheets.
+func colorCode(value, modal float64) string {
+	if value == 0 {
+		return "rgb(242,242,242)"
+	}
+	colors := [11]string{
+		"rgb(0,0,200)",
+		"rgb(50,255,255)",
+		"rgb(50,255,200)",
+		"rgb(50,255,50)",
+		"rgb(180,255,180)",
+		"rgb(255,255,255)",
+		"rgb(255,255,200)",
+		"rgb(255,255,100)",
+		"rgb(255,200,0)",
+		"rgb(255,100,0)",
+		"rgb(255,0,0)",
+	}
+	color := int(value-modal) + 5
+	switch {
+	case color < 0:
+		return colors[0]
+	case color >= len(colors):
+		return colors[len(colors)-1]
+	default:
+		return colors[color]
+	}
 }
 
 // ReadMutationRates reads mutation rates from a file.

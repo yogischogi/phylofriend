@@ -1,3 +1,10 @@
+2016-07-31
+- genfiles.WritePersonsAsHTML added.
+  The function writes Y-STR values in HTML format.
+  The first row of the table is used as the modal haplotype.
+  Depending on the distance to the modal haplotype the
+  values are colored.
+
 2016-07-17
 - genetic.ReadPersonsFromCSV rewritten.
   The function now cleanly distinguishes between Family
