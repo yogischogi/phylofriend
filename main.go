@@ -28,6 +28,7 @@ func main() {
 		modal      = flag.Bool("modal", false, "Creates modal haplotype.")
 		reduce     = flag.Int("reduce", 1, "Reduces the number of persons (for big trees).")
 		statistics = flag.Bool("statistics", false, "Prints marker statistics.")
+		model      = flag.String("model", "hybrid", "Mutation model: hybrid or infinite.")
 	)
 	flag.Parse()
 
@@ -152,7 +153,15 @@ func main() {
 	// calculated or if the matrix should be written to a file.
 	var dm *genetic.DistanceMatrix
 	if *phylipout != "" || *modal == true {
-		dm = genetic.NewDistanceMatrix(persons, mutationRates, genetic.Distance)
+		switch *model {
+		case "infinite":
+			dm = genetic.NewDistanceMatrix(persons, mutationRates, genetic.DistanceInfiniteAlleles)
+		case "hybrid":
+			dm = genetic.NewDistanceMatrix(persons, mutationRates, genetic.DistanceHybrid)
+		default:
+			fmt.Printf("Error, unknown mutation model: %s.\n", *model)
+			os.Exit(1)
+		}
 		dm = dm.Years(*gentime, *cal)
 	}
 

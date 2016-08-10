@@ -18,6 +18,11 @@ Command line options may be given in arbitrary order.
 \item[-labelcol] Number of the column that is used for labels
 	when reading CSV files.
 \item[-mrin] Filename of the mutation rates to use.
+\item[-model] Mutation model to use. This may be \texttt{hybrid}
+	or \texttt{infinite}. \texttt{hybrid} uses uses stepwise counting
+	for most markers except for the palindromic ones. 
+	\texttt{infinite} uses the infinite alleles mutation model for
+	all markers.
 \item[-anonymize] If this is true persons' names are replaced by numbers.
 \item[-modal] Creates modal haplotype and performs TMRCA calculation.
 \item[-phylipout] Filename for the distance matrix that can be fed into

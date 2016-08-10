@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.7.8)  31 JUL 2016 17:41
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.7.8)  10 AUG 2016 16:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -836,7 +836,7 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 \openout2 = `options.aux'.
 
  (./options.tex
-Overfull \hbox (19.4228pt too wide) in paragraph at lines 23--25
+Overfull \hbox (19.4228pt too wide) in paragraph at lines 28--30
 []\OT1/cmr/m/n/12 Filename for the dis-tance ma-trix that can be fed into the P
 HYLIP[[]]
  []
@@ -951,7 +951,7 @@ msfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
 i12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pf
 b>
-Output written on phylofriend.pdf (27 pages, 488423 bytes).
+Output written on phylofriend.pdf (27 pages, 488651 bytes).
 PDF statistics:
  489 PDF objects out of 1000 (max. 8388607)
  425 compressed objects within 5 object streams

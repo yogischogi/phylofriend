@@ -327,7 +327,17 @@ func distanceSimpleCount(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	return average(distances, nCompared)
 }
 
-// Distance calculates the genetic distance between two sets of
+// DistanceInfiniteAlleles calculates the genetic distance between two sets of
+// Y-STR markers.
+// It uses the infinite alleles mutation model. Information about mutation models
+// can be found at http://nitro.biosci.arizona.edu/ftDNA/models.html.
+// If one value or the mutation rate for a specific marker is
+// set to 0 it is excluded from the calculation.
+func DistanceInfiniteAlleles(ystr1, ystr2, mutationRates YstrMarkers) float64 {
+	return distance(ystr1, ystr2, mutationRates, true)
+}
+
+// DistanceHybrid calculates the genetic distance between two sets of
 // Y-STR markers.
 // It uses a hybrid mutation model. For most markers the stepwise
 // mutation model is used but for palindromic markers the infinite
@@ -335,9 +345,23 @@ func distanceSimpleCount(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 // can be found at http://nitro.biosci.arizona.edu/ftDNA/models.html.
 // If one value or the mutation rate for a specific marker is
 // set to 0 it is excluded from the calculation.
+func DistanceHybrid(ystr1, ystr2, mutationRates YstrMarkers) float64 {
+	return distance(ystr1, ystr2, mutationRates, false)
+}
+
+// distance calculates the genetic distance between two sets of
+// Y-STR markers.
+// The parameter isInfiniteAlleles determines if the infinite alleles
+// mutation model is used or a hybrid mutation model.
+// In case of the hybrid mutation model most markers are counted
+// stepwise but for palindromic markers the infinite
+// allele model is used. More information about mutation models
+// can be found at http://nitro.biosci.arizona.edu/ftDNA/models.html.
+// If one value or the mutation rate for a specific marker is
+// set to 0 it is excluded from the calculation.
 //
 // This method may change in future versions.
-func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
+func distance(ystr1, ystr2, mutationRates YstrMarkers, isInfiniteAlleles bool) float64 {
 	// nCompared is the number of markers that are actually compared.
 	// We compare only those marker for which the results of two persons
 	// and the mutation rate exist.
@@ -354,7 +378,7 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		return distance
 	}
 
-	/* // infinite calculates the genetic distance for one marker of
+	// infinite calculates the genetic distance for one marker of
 	// two persons using the infinite allelles mutation model
 	// (http://nitro.biosci.arizona.edu/ftDNA/models.html).
 	var infinite = func(marker1, marker2, mutationRate float64) (distance float64) {
@@ -367,7 +391,15 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 			nCompared++
 		}
 		return distance
-	} */
+	}
+
+	// singleDistance is the distance function that is used for most markers.
+	var singleDistance func(marker1, marker2, mutationRate float64) (distance float64)
+	if isInfiniteAlleles == true {
+		singleDistance = infinite
+	} else {
+		singleDistance = stepwise
+	}
 
 	// palindromic calculates the genetic distance of palindromic markers.
 	var palindromic = func(markers1, markers2 []float64, mutationRate float64) (distance float64) {
@@ -390,14 +422,18 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 	// Calculate distance for every single marker.
 	distances := make([]float64, MaxMarkers)
 	for i := 0; i < DYS389ii; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	if DYS389exists && mutationRates[DYS389ii] > 0 {
-		distances[DYS389ii] = distanceDYS389ii(ystr1[DYS389i], ystr1[DYS389ii], ystr2[DYS389i], ystr2[DYS389ii]) / mutationRates[DYS389ii]
+		if isInfiniteAlleles == true {
+			distances[DYS389ii] = distanceDYS389iiInfiniteAlleles(ystr1[DYS389i], ystr1[DYS389ii], ystr2[DYS389i], ystr2[DYS389ii]) / mutationRates[DYS389ii]
+		} else {
+			distances[DYS389ii] = distanceDYS389ii(ystr1[DYS389i], ystr1[DYS389ii], ystr2[DYS389i], ystr2[DYS389ii]) / mutationRates[DYS389ii]
+		}
 		nCompared++
 	}
 	for i := DYS389ii + 1; i < DYS464start; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	// DYS464: For compatibilty reasons DYS464 is stored at different range positions.
 	// So we need to put all values back together.
@@ -410,23 +446,23 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 		nCompared += DYS464end - DYS464start + 1
 	}
 	for i := DYS464end + 1; i < YCAIIstart; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	distances[YCAIIend] = palindromic(ystr1[YCAIIstart:YCAIIend+1], ystr2[YCAIIstart:YCAIIend+1], mutationRates[YCAIIend])
 	for i := YCAIIend + 1; i < CDYstart; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	distances[CDYend] = palindromic(ystr1[CDYstart:CDYend+1], ystr2[CDYstart:CDYend+1], mutationRates[CDYend])
 	for i := CDYend + 1; i < DYF395S1start; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	distances[DYF395S1end] = palindromic(ystr1[DYF395S1start:DYF395S1end+1], ystr2[DYF395S1start:DYF395S1end+1], mutationRates[DYF395S1end])
 	for i := DYF395S1end + 1; i < DYS413start; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	distances[DYS413end] = palindromic(ystr1[DYS413start:DYS413end+1], ystr2[DYS413start:DYS413end+1], mutationRates[DYS413end])
 	for i := DYS413end + 1; i < DYS526start; i++ {
-		distances[i] = stepwise(ystr1[i], ystr2[i], mutationRates[i])
+		distances[i] = singleDistance(ystr1[i], ystr2[i], mutationRates[i])
 	}
 	// Distances for palindromic markers outside Family Tree DNA's 111 marker range.
 	for _, region := range palindromicRegions {
@@ -441,6 +477,18 @@ func Distance(ystr1, ystr2, mutationRates YstrMarkers) float64 {
 // The input parameters are the DYS389 values for persons a and b.
 func distanceDYS389ii(aDYS389i, aDYS389ii, bDYS389i, bDYS389ii float64) float64 {
 	return math.Abs((aDYS389ii - aDYS389i) - (bDYS389ii - bDYS389i))
+}
+
+// distanceDYS389iiInfiniteAlleles calculates the genetic distance for the DYS389ii
+// marker. This marker is a special case because it includes DYS389i
+//
+// The input parameters are the DYS389 values for persons a and b.
+func distanceDYS389iiInfiniteAlleles(aDYS389i, aDYS389ii, bDYS389i, bDYS389ii float64) float64 {
+	if aDYS389ii-aDYS389i != bDYS389ii-bDYS389i {
+		return 1
+	} else {
+		return 0
+	}
 }
 
 // distancePalincromic calculates the genetic distance for palindromic markers

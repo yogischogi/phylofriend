@@ -1,3 +1,8 @@
+2016-08-10
+- Added the infinite alleles mutation model.
+  The mutation model can be selected by the -model command
+  line option.
+
 2016-07-31
 - genfiles.WritePersonsAsHTML added.
   The function writes Y-STR values in HTML format.
