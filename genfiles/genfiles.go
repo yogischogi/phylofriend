@@ -505,19 +505,29 @@ func WritePersonsAsHTML(filename string, persons []*genetic.Person, nMarkers int
 	// Write header.
 	header := "<!DOCTYPE html>\n" +
 		"<html lang=\"en\">\n" +
-		"<head><title>Y-STR Values</title></head>\n<body>\n<table>\n"
+		"<head><meta charset=\"utf-8\"><title>Y-STR Values</title></head>\n<body style=\"background-color:white;\">\n"
 	writer.WriteString(header)
 
+	// Write table containing names.
+	writer.WriteString("<div style=\"position:absolute; width:15ex;\">\n")
+	writer.WriteString("<table>\n")
+	writer.WriteString("<tr><td>ID</td></tr>\n")
+	for _, person := range persons {
+		writer.WriteString("<tr><td>" + person.Label + "</td></tr>\n")
+	}
+	writer.WriteString("</table>")
+	writer.WriteString("</div>\n")
+
 	// Write table data.
+	writer.WriteString("<div style=\"position:absolute; margin-left:15ex; max-width:calc(99vw - 15ex); overflow-x:scroll;\">\n")
+	writer.WriteString("<table>\n")
 	writer.WriteString("<tr>")
-	writer.WriteString("<td></td>")
 	for i := 0; i < nMarkers; i++ {
 		writer.WriteString("<td>" + genetic.YstrMarkerTable[i].InternalName + "</td>")
 	}
 	writer.WriteString("</tr>\n")
 	for _, person := range persons {
 		writer.WriteString("<tr>")
-		writer.WriteString("<td>" + person.Label + "</td>")
 		for i := 0; i < nMarkers; i++ {
 			value := strconv.FormatFloat(person.YstrMarkers[i], 'f', -1, 64)
 			writer.WriteString("<td style=\"background-color:" +
@@ -526,9 +536,10 @@ func WritePersonsAsHTML(filename string, persons []*genetic.Person, nMarkers int
 		}
 		writer.WriteString("</tr>\n")
 	}
-	// Write page end.
-	pageEnd := "</table>\n</body>\n</html>"
-	writer.WriteString(pageEnd)
+	writer.WriteString("</table>\n")
+	writer.WriteString("</div>\n")
+
+	writer.WriteString("</body>\n</html>")
 	err = writer.Flush()
 	return err
 }
