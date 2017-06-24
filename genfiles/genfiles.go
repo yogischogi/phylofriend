@@ -52,9 +52,10 @@ func ReadPersonsFromCSV(filename string, labelCol int) ([]*genetic.Person, error
 	sampleRecords := make([][]string, 0, 1000)
 	strIdx := 0
 	for _, record := range records {
-		strIdx = isSampleRecord(record)
-		if strIdx > 0 {
+		idx := strIndex(record)
+		if idx > 0 {
 			sampleRecords = append(sampleRecords, record)
+			strIdx = idx
 		}
 	}
 
@@ -81,25 +82,25 @@ func ReadPersonsFromCSV(filename string, labelCol int) ([]*genetic.Person, error
 	return persons, nil
 }
 
-// sampleRecord tries to determine if a given record is a
-// valid entry of a sample containing STR data.
-// If this is true, the function returns the start index
-// of the STR data. Otherwise strIdx = 0.
-func isSampleRecord(fields []string) (strIdx int) {
+// strIndex returns the index of the first field that contains
+// a valid STR value (DYS393).
+// If no STR value is found the return value is -1.
+func strIndex(fields []string) int {
+	result := -1
 	// A valid entry must have at least one Id and 12 Y-STR values.
 	if len(fields) < 13 {
-		return 0
+		return result
 	}
 	// Try to determine the start of the Y-STR values.
 	// Results starts with DYS393, which is in the range 9-17.
-	for i, field := range fields {
+	for i, field := range fields[1:] {
 		dys393, err := strconv.ParseFloat(field, 64)
 		if err == nil && dys393 >= 9 && dys393 < 17 {
-			strIdx = i
+			result = i + 1
 			break
 		}
 	}
-	return strIdx
+	return result
 }
 
 // personFromFields creates a person from a slice of strings.
