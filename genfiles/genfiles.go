@@ -43,6 +43,7 @@ func ReadPersonsFromCSV(filename string, labelCol int) ([]*genetic.Person, error
 
 	// Read all CSV records from file.
 	csvReader := csv.NewReader(infile)
+	csvReader.FieldsPerRecord = -1
 	records, err := csvReader.ReadAll()
 	if err != nil {
 		return nil, err
