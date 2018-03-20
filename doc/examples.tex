@@ -117,7 +117,7 @@ results \cite{YFullMutationRate}. You can use it by typing
 \noindent\texttt{phylofriend -personsin persons.csv -phylipout infile\\
 -gentime 32 -mrin 67-average.txt}
 
-In reality an optimal result is often hard to archieve.
+In reality an optimal result is often hard to achieve.
 Especially within the range of genealogical time frames
 (about 400 years) and only small numbers of persons who
 have tested, you are often left with a large statistical error.
@@ -141,7 +141,7 @@ multiplies all genetic distances by a factor of 1.2.
 
 If you want to count mutational differences between
 persons, for example on a 37 marker scale, you can
-archieve this by typing
+achieve this by typing
 
 \noindent\texttt{phylofriend -personsin persons.csv -phylipout distancecount.txt\\
 -nmarkers 37 -cal 37}
@@ -175,7 +175,7 @@ have tested for all 37 markers, while the use of the
 \emph{37-count} mutation rate also accepts persons who have
 tested for a lower number of markers. The result is an estimate.
 This option was introduced because next generation sequencing
-reveals Y-STR results for about 500 markers. However due to
+has revealed Y-STR results for 587 markers. However due to
 the technical restrictions of this method, different persons
 usually get results for different, but largely overlapping,
 marker sets.
@@ -219,19 +219,25 @@ Let's take DYS391 as an example. It has two values,
 
 \subsection{Use Data from YFull}
 
-\href{http://yfull.com/}{YFull} usually reports about 400
-Y-STR marker results. To use these results put the YFull 
-result files for every single person into a directory, for
-example \emph{inputdir}. Call Phylofriend by typing:
+\href{http://yfull.com/}{YFull} reports up to 587 STR values
+(March 2018), but not all of them for each person. A Family
+Tree DNA Big Y test usually reveals about 500 STR markers,
+some times less, some times more.
+
+To use these results put the YFull result files for every
+single person into a directory, for example \emph{inputdir}.
+Call Phylofriend by typing:
 
 \vspace{1ex}
 \noindent\texttt{phylofriend -personsin inputdir -phylipout infile -modal\\
--gentime 32 -mrin 500-average.txt}
+-mrin 587-count.txt}
 \vspace{1ex}
 
 \noindent
-This command will use up to 500 markers for comparison. The
-mutation rates for 500 markers are still experimental.
+This command will use up to 587 markers for comparison.
+The effect of the file \emph{587-count.txt} is that the 
+mutation differences are just counted. An average mutation
+rate for 587 markers is not available.
 
 
 \subsection{Extract Data from a Spreadsheet in CSV format}

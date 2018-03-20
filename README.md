@@ -1,9 +1,12 @@
 # Phylofriend
 
 Phylofriend’s main purpose is to calculate genetic
-distances from Family Tree Y-DNA data. The results can be
+distances from Y-chromosome STR values. The results can be
 used as input for the [PHYLIP](http://evolution.genetics.washington.edu/phylip.html)
 program to create phylogenetic trees.
+
+Phylofriend supports all 587 STR markers that are
+reported by YFull (March 2018).
 
 
 ## Documentation

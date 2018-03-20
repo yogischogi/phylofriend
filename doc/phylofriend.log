@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.7.8)  10 AUG 2016 16:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.22)  20 MAR 2018 21:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -862,38 +862,38 @@ Overfull \hbox (5.959pt too wide) in paragraph at lines 186--191
  (./technicalities.tex [11
 
 
-] [12] [13] [14]) [15]
+] [12] [13]) [14]
 \openout2 = `theory.aux'.
 
  (./theory.tex
-<img/haplogroups.png, id=276, 369.7815pt x 160.1985pt>
+<img/haplogroups.png, id=269, 369.7815pt x 160.1985pt>
 File: img/haplogroups.png Graphic file (type png)
 
 <use img/haplogroups.png>
 Package pdftex.def Info: img/haplogroups.png used on input line 15.
 (pdftex.def)             Requested size: 369.88582pt x 160.25676pt.
- [16
+ [15
 
 
  <./img/haplogroups.png>]
-<img/haplotypes.png, id=291, 369.7815pt x 66.2475pt>
+<img/haplotypes.png, id=284, 369.7815pt x 66.2475pt>
 File: img/haplotypes.png Graphic file (type png)
  <use img/haplotypes.png>
 Package pdftex.def Info: img/haplotypes.png used on input line 56.
 (pdftex.def)             Requested size: 369.88582pt x 66.27158pt.
 
-<img/phylotrees.png, id=293, 369.7815pt x 163.812pt>
+<img/phylotrees.png, id=286, 369.7815pt x 163.812pt>
 File: img/phylotrees.png Graphic file (type png)
  <use img/phylotrees.png>
 Package pdftex.def Info: img/phylotrees.png used on input line 94.
 (pdftex.def)             Requested size: 369.88582pt x 163.87157pt.
 
-[17 <./img/haplotypes.png>] [18 <./img/phylotrees.png>] [19] [20]
+[16 <./img/haplotypes.png>] [17 <./img/phylotrees.png>] [18] [19]
 Overfull \hbox (2.07057pt too wide) in paragraph at lines 283--291
 [][]  
  []
 
-[21]
+[20]
 Overfull \hbox (2.5138pt too wide) in paragraph at lines 353--361
 [][]  
  []
@@ -903,26 +903,26 @@ Overfull \hbox (2.5138pt too wide) in paragraph at lines 370--379
 [][]  
  []
 
-[22] <img/distancetrees.png, id=359, 369.7815pt x 241.3818pt>
+[21] <img/distancetrees.png, id=352, 369.7815pt x 241.3818pt>
 File: img/distancetrees.png Graphic file (type png)
 
 <use img/distancetrees.png>
 Package pdftex.def Info: img/distancetrees.png used on input line 431.
 (pdftex.def)             Requested size: 369.88582pt x 241.4696pt.
- [23]
-<img/distances.png, id=368, 369.7815pt x 185.2521pt>
+ [22]
+<img/distances.png, id=361, 369.7815pt x 185.2521pt>
 File: img/distances.png Graphic file (type png)
  <use img/distances.png>
 Package pdftex.def Info: img/distances.png used on input line 470.
 (pdftex.def)             Requested size: 369.88582pt x 185.31949pt.
 
-[24 <./img/distancetrees.png>]) [25 <./img/distances.png>] (./references.tex
-[26
+[23 <./img/distancetrees.png>]) [24 <./img/distances.png>] (./references.tex
+[25
 
 ])
 No file phylofriend.bbl.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 36.
-[27]
+[26]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 36.
  (./phylofriend.aux (./title.aux) (./introduction.aux) (./installation.aux) (./
 options.aux) (./examples.aux) (./technicalities.aux) (./theory.aux))
@@ -933,13 +933,13 @@ Package rerunfilecheck Info: File `phylofriend.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 36.
  ) 
 Here is how much of TeX's memory you used:
- 9886 strings out of 494394
- 134149 string characters out of 6171060
+ 9885 strings out of 494394
+ 134142 string characters out of 6171059
  203897 words of memory out of 5000000
  12968 multiletter control sequences out of 15000+600000
  10126 words of font info for 34 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 29i,8n,30p,408b,455s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,8n,30p,408b,461s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/dirk/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
@@ -951,10 +951,10 @@ msfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmt
 i12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pf
 b>
-Output written on phylofriend.pdf (27 pages, 488651 bytes).
+Output written on phylofriend.pdf (26 pages, 487531 bytes).
 PDF statistics:
- 489 PDF objects out of 1000 (max. 8388607)
- 425 compressed objects within 5 object streams
- 106 named destinations out of 1000 (max. 500000)
+ 482 PDF objects out of 1000 (max. 8388607)
+ 419 compressed objects within 5 object streams
+ 105 named destinations out of 1000 (max. 500000)
  266 words of extra memory for PDF output out of 10000 (max. 10000000)
 

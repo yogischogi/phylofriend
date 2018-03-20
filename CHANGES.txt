@@ -1,3 +1,8 @@
+2018-03-20
+- Upgraded to 587 markers.
+- Removed DYF390.1 and DYF390.2 because they are no longer
+  reported by YFull.
+
 2016-08-10
 - Added the infinite alleles mutation model.
   The mutation model can be selected by the -model command
